@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 03a396796b94fa54ea7441e7e03d048b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 292565
+  packageName: Stylized Muscle Car
+  packageVersion: 1.0
+  assetPath: Assets/StylizedMuscleCar/Musclecar/BodyWork_LOD1.mat
+  uploadId: 734155
