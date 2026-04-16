@@ -18,6 +18,11 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("TrackScene");
     }
 
+    public void s1()
+    {
+        SceneManager.LoadScene("s1");
+    }
+
     public void QuitGame()
     {
         Debug.Log("Game Quit!");
