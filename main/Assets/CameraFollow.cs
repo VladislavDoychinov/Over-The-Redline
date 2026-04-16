@@ -5,16 +5,30 @@ public class CameraViewSwitcher : MonoBehaviour
     [Header("Targets")]
     public Transform carTransform;
 
+    [Header("UI Elements")]
+    public GameObject gaugeUI;
+
     [Header("Offsets")]
     public Vector3 thirdPersonOffset = new Vector3(0, 1.5f, -4.4f);
     public Vector3 firstPersonOffset = new Vector3(-0.2f, 0.3f, -0.24f);
     public Vector3 secondPersonOffset = new Vector3(-0.6f, -0.1f, 0.1f);
 
+    [Header("Mouse Look Settings")]
+    public float mouseSensitivity = 2.0f;
+    public float maxLookAngle = 60f;
+    private float yaw = 0f;
+    private float pitch = 0f;
+
     [Header("Speed")]
-    [Tooltip("Set to 50+ for a locked-on feel. Set to 100+ for zero lag.")]
     public float snapStiffness = 100f;
 
     private int cameraMode = 0;
+
+    void Start()
+    {
+        UpdateUIVisibility();
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     void Update()
     {
@@ -22,7 +36,33 @@ public class CameraViewSwitcher : MonoBehaviour
         {
             cameraMode = (cameraMode + 1) % 3;
 
+            yaw = 0f;
+            pitch = 0f;
+
+            UpdateUIVisibility();
             SnapToTarget();
+        }
+
+        if (cameraMode != 0)
+        {
+            HandleMouseLook();
+        }
+    }
+
+    private void HandleMouseLook()
+    {
+        yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
+        pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+
+        pitch = Mathf.Clamp(pitch, -maxLookAngle, maxLookAngle);
+        yaw = Mathf.Clamp(yaw, -90, 90);
+    }
+
+    private void UpdateUIVisibility()
+    {
+        if (gaugeUI != null)
+        {
+            gaugeUI.SetActive(cameraMode == 0);
         }
     }
 
@@ -38,15 +78,12 @@ public class CameraViewSwitcher : MonoBehaviour
         Vector3 currentOffset;
         Quaternion targetRot;
 
-        if (cameraMode == 1)
+        if (cameraMode == 1 || cameraMode == 2)
         {
-            currentOffset = firstPersonOffset;
-            targetRot = carTransform.rotation;
-        }
-        else if (cameraMode == 2)
-        {
-            currentOffset = secondPersonOffset;
-            targetRot = carTransform.rotation;
+            currentOffset = (cameraMode == 1) ? firstPersonOffset : secondPersonOffset;
+
+            Quaternion mouseRotation = Quaternion.Euler(pitch, yaw, 0);
+            targetRot = carTransform.rotation * mouseRotation;
         }
         else
         {
