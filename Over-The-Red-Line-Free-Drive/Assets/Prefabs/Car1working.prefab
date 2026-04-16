@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 5939343802100665518}
   - component: {fileID: 514219602384259527}
   - component: {fileID: 3800230371294830310}
-  - component: {fileID: 8151260490932802031}
+  - component: {fileID: 7907422594428008363}
+  - component: {fileID: 6167532867427681129}
   m_Layer: 0
   m_Name: Car1working
   m_TagString: Player
@@ -32,7 +33,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6581421132823258820}
+  - {fileID: 4504395646611597990}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &514219602384259527
@@ -59,7 +60,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!65 &3800230371294830310
@@ -83,7 +84,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8151260490932802031
+--- !u!114 &7907422594428008363
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,7 +99,10 @@ MonoBehaviour:
   acceleration: 8
   deceleration: 3
   brakeStrength: 10
+  engineBraking: 4
   turnSpeed: 100
+  highSpeedTurnReduction: 0.6
+  reverseTurnMultiplier: 0.7
   currentGear: 0
   reverseMaxSpeed: 5
   gearMaxSpeeds:
@@ -108,6 +112,34 @@ MonoBehaviour:
   - 16
   - 20
   - 25
+  gearAccelerationMultipliers:
+  - 0
+  - 1.8
+  - 1.35
+  - 1
+  - 0.8
+  - 0.65
+--- !u!114 &6167532867427681129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896824709196235990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb9cdaf3e695e143adb25e2d8b8d25d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frontLeftWheel: {fileID: 5202014173001167668}
+  frontRightWheel: {fileID: 4106800849635275720}
+  backLeftWheel: {fileID: 497975755227375966}
+  backRightWheel: {fileID: 4299623054560063213}
+  steeringWheel: {fileID: 6458950991204298428}
+  wheelSpinSpeed: 500
+  maxWheelSteerAngle: 30
+  steeringWheelMaxAngle: 70
+  steeringWheelAxis: {x: 0, y: 0, z: 1}
 --- !u!1001 &1378215255003205113
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,9 +208,39 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53d5d388796c8f7419024703c54abb8e, type: 3}
---- !u!4 &6581421132823258820 stripped
+--- !u!4 &497975755227375966 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 5221221035743931197, guid: 53d5d388796c8f7419024703c54abb8e,
+  m_CorrespondingSourceObject: {fileID: 1569870845737182375, guid: 53d5d388796c8f7419024703c54abb8e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1378215255003205113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4106800849635275720 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3161015552893648433, guid: 53d5d388796c8f7419024703c54abb8e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1378215255003205113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4299623054560063213 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2921484977178436372, guid: 53d5d388796c8f7419024703c54abb8e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1378215255003205113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4504395646611597990 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3288389145258633055, guid: 53d5d388796c8f7419024703c54abb8e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1378215255003205113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5202014173001167668 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6562064807568457421, guid: 53d5d388796c8f7419024703c54abb8e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1378215255003205113}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6458950991204298428 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5369041500910789445, guid: 53d5d388796c8f7419024703c54abb8e,
     type: 3}
   m_PrefabInstance: {fileID: 1378215255003205113}
   m_PrefabAsset: {fileID: 0}

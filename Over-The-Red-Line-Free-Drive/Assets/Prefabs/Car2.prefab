@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 963014398212704898}
   - component: {fileID: 4668314464488476944}
   - component: {fileID: 7826762171867165617}
-  - component: {fileID: 4224870681138898965}
+  - component: {fileID: 870183760309496628}
+  - component: {fileID: 2025183766718871020}
   m_Layer: 0
   m_Name: Car2
   m_TagString: Player
@@ -59,7 +60,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!65 &7826762171867165617
@@ -83,7 +84,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4224870681138898965
+--- !u!114 &870183760309496628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2659789196637321999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb9cdaf3e695e143adb25e2d8b8d25d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frontLeftWheel: {fileID: 0}
+  frontRightWheel: {fileID: 0}
+  backLeftWheel: {fileID: 0}
+  backRightWheel: {fileID: 0}
+  steeringWheel: {fileID: 0}
+  wheelSpinSpeed: 500
+  maxWheelSteerAngle: 30
+  steeringWheelMaxAngle: 70
+  steeringWheelAxis: {x: 0, y: 0, z: 1}
+--- !u!114 &2025183766718871020
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,19 +117,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f49197b952914478d1b0ea420241e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 8
-  deceleration: 3
-  brakeStrength: 10
-  turnSpeed: 100
+  acceleration: 10
+  deceleration: 2.5
+  brakeStrength: 14
+  engineBraking: 4
+  turnSpeed: 110
+  highSpeedTurnReduction: 0.6
+  reverseTurnMultiplier: 0.7
   currentGear: 0
-  reverseMaxSpeed: 5
+  reverseMaxSpeed: 6
   gearMaxSpeeds:
   - 0
-  - 8
-  - 12
+  - 10
   - 16
-  - 20
-  - 25
+  - 23
+  - 30
+  - 38
+  gearAccelerationMultipliers:
+  - 0
+  - 1.8
+  - 1.35
+  - 1
+  - 0.8
+  - 0.65
 --- !u!1001 &995137385345409845
 PrefabInstance:
   m_ObjectHideFlags: 0
