@@ -10,7 +10,26 @@ public class CarSwitcher : MonoBehaviour
 
     void Start()
     {
-        ShowCar1();
+        LockCar(car1);
+        LockCar(car2);
+
+        if (SelectedCarID == 1)
+        {
+            ShowCar1();
+        }
+        else
+        {
+            ShowCar2();
+        }
+    }
+
+    private void LockCar(GameObject car)
+    {
+        Rigidbody rb = car.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+        }
     }
 
     public void ShowCar1()

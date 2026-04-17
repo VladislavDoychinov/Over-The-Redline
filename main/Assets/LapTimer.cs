@@ -9,9 +9,26 @@ public class LapTimer : MonoBehaviour
     public TextMeshProUGUI bestLapText;
 
     private float currentTime;
-    private float bestTime = 0f;
+    private float bestTime;
     private bool timerActive = false;
     private bool hasHitCheckpoint = false;
+
+
+    private string saveKey = "BestLapTime";
+
+    void Start()
+    {
+        bestTime = PlayerPrefs.GetFloat(saveKey, 0f);
+
+        if (bestTime > 0)
+        {
+            bestLapText.text = "Best: " + FormatTime(bestTime);
+        }
+        else
+        {
+            bestLapText.text = "Best: --:--.--";
+        }
+    }
 
     void Update()
     {
@@ -63,6 +80,9 @@ public class LapTimer : MonoBehaviour
         {
             bestTime = currentTime;
             bestLapText.text = "Best: " + FormatTime(bestTime);
+
+            PlayerPrefs.SetFloat(saveKey, bestTime);
+            PlayerPrefs.Save();
         }
     }
 
@@ -72,5 +92,13 @@ public class LapTimer : MonoBehaviour
         int seconds = Mathf.FloorToInt(time % 60);
         int fraction = Mathf.FloorToInt((time * 100) % 100);
         return string.Format("{0:00}:{1:00}.{2:00}", minutes, seconds, fraction);
+    }
+
+    [ContextMenu("Reset Best Time")]
+    public void ResetBestTime()
+    {
+        PlayerPrefs.DeleteKey(saveKey);
+        bestTime = 0f;
+        bestLapText.text = "Best: --:--.--";
     }
 }
