@@ -5,19 +5,20 @@ public class TrackSpawner : MonoBehaviour
     public GameObject car1Prefab;
     public GameObject car2Prefab;
 
-    void Start()
+    void Awake()
     {
         GameObject spawnedCar;
 
         if (CarSwitcher.SelectedCarID == 1)
-        {
             spawnedCar = Instantiate(car1Prefab, transform.position, transform.rotation);
-        }
         else
-        {
             spawnedCar = Instantiate(car2Prefab, transform.position, transform.rotation);
-        }
 
         spawnedCar.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        Rigidbody rb = spawnedCar.GetComponent<Rigidbody>();
+        if (rb != null) rb.isKinematic = false;
+        CameraViewSwitcher cam = Object.FindFirstObjectByType<CameraViewSwitcher>();
+        if (cam != null) cam.carTransform = spawnedCar.transform;
     }
 }

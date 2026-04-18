@@ -191,7 +191,6 @@ GameObject:
   - component: {fileID: 4682133990143788}
   - component: {fileID: 33460102598866466}
   - component: {fileID: 23387216953059086}
-  - component: {fileID: 64205451187858622}
   m_Layer: 0
   m_Name: BodyMain
   m_TagString: Untagged
@@ -271,28 +270,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64205451187858622
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1030702647857054}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300012, guid: 1e4c2f610722651479daaae54d817d84, type: 3}
 --- !u!1 &1048226503987724
 GameObject:
   m_ObjectHideFlags: 0
@@ -3253,9 +3230,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4352964966052378}
+  - component: {fileID: -304863933948413187}
+  - component: {fileID: 6425344593772952068}
+  - component: {fileID: 2046022812749318327}
   m_Layer: 0
   m_Name: Car 1
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3269,7 +3249,7 @@ Transform:
   m_GameObject: {fileID: 1654648867817274}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.1578019, y: 0.37485552, z: -3.36654}
+  m_LocalPosition: {x: 3.1578019, y: 0.48, z: -2.381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3280,6 +3260,109 @@ Transform:
   - {fileID: 4981666998271360}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &-304863933948413187
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654648867817274}
+  serializedVersion: 5
+  m_Mass: 1540
+  m_LinearDamping: 0.05
+  m_AngularDamping: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &6425344593772952068
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654648867817274}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 1, z: 4.3}
+  m_Center: {x: 0, y: 0, z: 0.3}
+--- !u!114 &2046022812749318327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654648867817274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d832406b5e88491488ca08005a640ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarController
+  isEngineOn: 1
+  stallThreshold: 0.1
+  currentGear: 1
+  maxGears: 6
+  gearMultipliers:
+  - 0
+  - 0.4
+  - 0.6
+  - 0.8
+  - 1
+  - 1.15
+  - 1.3
+  currentRPM: 0
+  maxRPM: 8000
+  idleRPM: 900
+  engineForce: 10000
+  maxSpeed: 66
+  brakeForce: 50000
+  maxSteerAngle: 40
+  steerSpeed: 7
+  turnSharpness: 6
+  steerSpeedDamping: 0.05
+  steerThreshold: 0.5
+  stationarySteerAbility: 0.1
+  rideHeight: 0
+  springDamper: 6000
+  springStrength: 250000
+  antiRollForce: 40000
+  wheelRadius: 0.3
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  tireGrip: 1
+  velocityAlignStrength: 10
+  centerOfMassY: -0.2
+  wheelFLName: Wheel_FL
+  wheelFRName: Wheel_FR
+  wheelBLName: Wheel_RL
+  wheelBRName: Wheel_RR
+  wheelFL: {fileID: 4484528274142068}
+  wheelFR: {fileID: 4981666998271360}
+  wheelBL: {fileID: 4910949945621414}
+  wheelBR: {fileID: 4300469993718988}
 --- !u!1 &1708700505944424
 GameObject:
   m_ObjectHideFlags: 0

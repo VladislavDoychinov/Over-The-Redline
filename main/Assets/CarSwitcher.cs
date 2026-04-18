@@ -25,11 +25,11 @@ public class CarSwitcher : MonoBehaviour
 
     private void LockCar(GameObject car)
     {
-        Rigidbody rb = car.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = true;
-        }
+        //Rigidbody rb = car.GetComponent<Rigidbody>();
+        //if (rb != null)
+        //{
+        //    rb.isKinematic = true;
+        //}
     }
 
     public void ShowCar1()

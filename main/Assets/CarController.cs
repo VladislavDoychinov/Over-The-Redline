@@ -16,38 +16,40 @@ public class CarController : MonoBehaviour
     public float idleRPM = 1200f;
 
     [Header("Engine & Speed")]
-    public float engineForce = 35000f;
+    public float engineForce = 5000f;
     public float maxSpeed = 75f;
     public float brakeForce = 50000f;
 
-    [Header("Steering")]
+    [Header("Steering & Stability")]
     public float maxSteerAngle = 35f;
     public float steerSpeed = 15f;
-    public float turnSharpness = 12.0f;
+    public float turnSharpness = 4.0f;
     public float steerSpeedDamping = 0.05f;
     public float steerThreshold = 0.5f;
     [Range(0f, 1f)] public float stationarySteerAbility = 0.1f;
 
     [Header("High-Response Suspension")]
-    public float rideHeight = 0.15f;
+    public float rideHeight = 0f;
     public float springDamper = 6000f;
     public float springStrength = 250000f;
     public float antiRollForce = 40000f;
-    public float wheelRadius = 0.3f;
+    public float wheelRadius = 0.15f;
     public LayerMask groundLayer = ~0;
 
     [Header("Handling")]
-    public float tireGrip = 2.5f;
+    public float tireGrip = 1.5f;
     public float velocityAlignStrength = 15f;
-    public float centerOfMassY = -0.6f;
+    public float centerOfMassY = -0.2f;
 
-    [Header("Wheel Names")]
-    public string frontLeftName = "WheelFL_LOD0";
-    public string frontRightName = "WheelFR_LOD0";
-    public string backLeftName = "WheelBL_LOD0";
-    public string backRightName = "WheelBR_LOD0";
-
-    public Transform wheelFL, wheelFR, wheelBL, wheelBR;
+    [Header("Wheel Transforms")]
+    public string wheelFLName = "Wheel_FL";
+    public string wheelFRName = "Wheel_FR";
+    public string wheelBLName = "Wheel_RL";
+    public string wheelBRName = "Wheel_RR";
+    public Transform wheelFL;
+    public Transform wheelFR;
+    public Transform wheelBL;
+    public Transform wheelBR;
 
     private Collider[] selfColliders;
     private Rigidbody rb;
@@ -61,17 +63,27 @@ public class CarController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.mass = 1500f;
+        rb.mass = 1740f;
+
+        rb.angularDamping = 5.0f;
+        rb.linearDamping = 0.05f;
+        rb.maxAngularVelocity = 7.0f;
+
         rb.centerOfMass = new Vector3(0f, centerOfMassY, 0.1f);
         selfColliders = GetComponentsInChildren<Collider>();
     }
 
     void Start()
     {
-        wheels[0] = wheelFL != null ? wheelFL : FindChildRecursive(transform, frontLeftName);
-        wheels[1] = wheelFR != null ? wheelFR : FindChildRecursive(transform, frontRightName);
-        wheels[2] = wheelBL != null ? wheelBL : FindChildRecursive(transform, backLeftName);
-        wheels[3] = wheelBR != null ? wheelBR : FindChildRecursive(transform, backRightName);
+        if (wheelFL == null) wheelFL = transform.Find(wheelFLName);
+        if (wheelFR == null) wheelFR = transform.Find(wheelFRName);
+        if (wheelBL == null) wheelBL = transform.Find(wheelBLName);
+        if (wheelBR == null) wheelBR = transform.Find(wheelBRName);
+    
+        wheels[0] = wheelFL;
+        wheels[1] = wheelFR;
+        wheels[2] = wheelBL;
+        wheels[3] = wheelBR;
     }
 
     void Update()
@@ -102,7 +114,8 @@ public class CarController : MonoBehaviour
         float v = Input.GetAxis("Vertical");
         float speed = rb.linearVelocity.magnitude;
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-        bool clutchPressed = Input.GetKey(KeyCode.LeftShift);
+
+        bool clutchPressed = Input.GetKey(KeyCode.Tab);
 
         if (isEngineOn && speed < stallThreshold && !clutchPressed && currentGear != 0 && Mathf.Abs(v) < 0.1f)
             isEngineOn = false;
@@ -112,6 +125,7 @@ public class CarController : MonoBehaviour
             currentRPM = Mathf.Lerp(currentRPM, Mathf.Abs(v) > 0.1f ? maxRPM : idleRPM, Time.fixedDeltaTime * 5f);
         else
             currentRPM = Mathf.Lerp(idleRPM, maxRPM, speed / Mathf.Max(gearMaxSpeed, 0.01f));
+
         if (!isEngineOn) currentRPM = 0;
 
         float steerAbility = Mathf.Lerp(stationarySteerAbility, 1f, speed / 5f);
@@ -121,7 +135,8 @@ public class CarController : MonoBehaviour
         int groundedCount = 0;
         for (int i = 0; i < 4; i++)
         {
-            if (wheels[i] == null) continue;
+            if (wheels[i] == null) continue; 
+
             Vector3 rayOrigin = wheels[i].position + transform.up * 0.5f;
             RaycastHit[] hits = Physics.RaycastAll(rayOrigin, -transform.up, rideHeight + 0.5f + wheelRadius, groundLayer);
 
@@ -158,19 +173,13 @@ public class CarController : MonoBehaviour
         ApplyAntiRoll(0, 1);
         ApplyAntiRoll(2, 3);
 
-        if (Mathf.Abs(h) < 0.1f && groundedCount > 0)
-        {
-            float rollAngle = transform.localEulerAngles.z;
-            if (rollAngle > 180) rollAngle -= 360;
-            rb.AddRelativeTorque(Vector3.forward * -rollAngle * 5000f);
-        }
-
         if (groundedCount > 0)
         {
             float movingDir = Mathf.Sign(localVel.z);
             if (speed < 0.1f) movingDir = 0;
+
             float targetAngularY = (smoothSteer / maxSteerAngle) * turnSharpness * Mathf.Clamp01(speed / steerThreshold) * movingDir;
-            rb.angularVelocity = new Vector3(rb.angularVelocity.x * 0.8f, targetAngularY, rb.angularVelocity.z * 0.8f);
+            rb.angularVelocity = new Vector3(rb.angularVelocity.x * 0.9f, targetAngularY, rb.angularVelocity.z * 0.9f);
 
             if (speed > 1f)
             {
@@ -204,12 +213,5 @@ public class CarController : MonoBehaviour
             wheelAngles[i] += speed * 18f * dir * Time.fixedDeltaTime;
             wheels[i].localRotation = Quaternion.Euler(wheelAngles[i], (i < 2) ? smoothSteer : 0f, 0f);
         }
-    }
-
-    private Transform FindChildRecursive(Transform parent, string name)
-    {
-        if (parent.name == name) return parent;
-        foreach (Transform child in parent) { Transform res = FindChildRecursive(child, name); if (res != null) return res; }
-        return null;
     }
 }
