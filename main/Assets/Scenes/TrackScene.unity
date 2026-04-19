@@ -403,7 +403,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 99
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -3120,7 +3120,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 41b9b840e523add45b9d78bf77285a17, type: 2}
+  - {fileID: 2100000, guid: c36f93fe505fd5746bbdffbe3988f5d0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4834,7 +4834,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 41b9b840e523add45b9d78bf77285a17, type: 2}
+  - {fileID: 2100000, guid: c36f93fe505fd5746bbdffbe3988f5d0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

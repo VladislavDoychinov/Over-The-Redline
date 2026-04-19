@@ -1,217 +1,555 @@
 using UnityEngine;
 
+/// <summary>
+/// Burnout-style arcade drift car controller.
+/// The car slides very easily and steers into the slide automatically,
+/// just like in the Burnout series.
+///
+/// Controls: WASD / Arrow keys = drive/steer
+///           Space = handbrake (initiates drift instantly)
+///           Tab = clutch | E = start engine
+///           Shift+1-6 = manual gear | Shift+0 = neutral | Shift+- = reverse
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class CarController : MonoBehaviour
 {
-    [Header("Engine State")]
+    // ??????????????????????????????????????????????????????????????????
+    //  Engine
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Engine")]
     public bool isEngineOn = true;
-    public float stallThreshold = 0.2f;
+    public float idleRPM = 800f;
+    public float maxRPM = 7500f;
+    public float rpmLimiter = 7200f;
+    [Range(0f, 1f)]
+    public float throttleResponse = 0.2f;
+    public float engineBraking = 0.008f;  // very low — keeps slides alive on lift-off
+    [HideInInspector] public float currentRPM;
 
-    [Header("Gears & RPM")]
-    public int currentGear = 1;
-    public int maxGears = 6;
-    public float[] gearMultipliers = { 0.0f, 0.4f, 0.6f, 0.8f, 1.0f, 1.15f, 1.3f };
-    public float currentRPM;
-    public float maxRPM = 8000f;
-    public float idleRPM = 1200f;
+    // ??????????????????????????????????????????????????????????????????
+    //  Transmission
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Gears & Transmission")]
+    public float[] gearRatios = { -3.5f, 3.8f, 2.2f, 1.5f, 1.1f, 0.85f, 0.70f };
+    public float finalDriveRatio = 3.7f;
+    public float engineTorque = 900f;
+    public float maxSpeed = 60f;
 
-    [Header("Engine & Speed")]
-    public float engineForce = 5000f;
-    public float maxSpeed = 75f;
-    public float brakeForce = 50000f;
+    [Header("Auto Shift")]
+    public bool autoShift = true;
+    public float upshiftRPM = 6200f;
+    public float downshiftRPM = 2000f;
 
-    [Header("Steering & Stability")]
-    public float maxSteerAngle = 35f;
-    public float steerSpeed = 15f;
-    public float turnSharpness = 4.0f;
-    public float steerSpeedDamping = 0.05f;
-    public float steerThreshold = 0.5f;
-    [Range(0f, 1f)] public float stationarySteerAbility = 0.1f;
+    // ??????????????????????????????????????????????????????????????????
+    //  Brakes
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Brakes")]
+    public float brakeTorque = 1200f;
+    public float handbrakeTorque = 2500f;
 
-    [Header("High-Response Suspension")]
-    public float rideHeight = 0f;
-    public float springDamper = 6000f;
-    public float springStrength = 250000f;
-    public float antiRollForce = 40000f;
-    public float wheelRadius = 0.15f;
+    // ??????????????????????????????????????????????????????????????????
+    //  Steering
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Steering")]
+    public float maxSteerAngle = 45f;
+    public float steerSpeed = 8f;
+    public float steerSpeedDamping = 0.008f;
+
+    [Tooltip("How strongly the car auto-rotates toward its velocity direction while sliding. " +
+             "This is the main Burnout feel knob. 0 = off, 1 = very strong.")]
+    [Range(0f, 1f)]
+    public float velocitySteerStrength = 0.92f;
+
+    [Tooltip("How fast the car body snaps toward velocity direction during a slide.")]
+    public float velocitySteerSpeed = 4.5f;
+
+    // ??????????????????????????????????????????????????????????????????
+    //  Suspension
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Suspension")]
+    public float rideHeight = 0.30f;
+    public float springStrength = 45000f;
+    public float springDamper = 3500f;
+    public float antiRollForce = 5000f;
+    public float wheelRadius = 0.33f;
     public LayerMask groundLayer = ~0;
 
-    [Header("Handling")]
-    public float tireGrip = 1.5f;
-    public float velocityAlignStrength = 15f;
-    public float centerOfMassY = -0.2f;
+    // ??????????????????????????????????????????????????????????????????
+    //  Tires
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Tires & Grip")]
+    [Tooltip("Front grip — keep moderate so you can steer out of slides.")]
+    public float frontTireFriction = 0.85f;
 
-    [Header("Wheel Transforms")]
-    public string wheelFLName = "Wheel_FL";
-    public string wheelFRName = "Wheel_FR";
-    public string wheelBLName = "Wheel_RL";
-    public string wheelBRName = "Wheel_RR";
+    [Tooltip("Rear grip — keep LOW for Burnout feel. 0.1-0.2 recommended.")]
+    public float rearTireFriction = 0.15f;
+
+    [Tooltip("Rear grip when handbraking — near zero = instant tail-out.")]
+    [Range(0f, 0.3f)]
+    public float handbrakeTireFriction = 0.02f;
+
+    [Tooltip("Front lateral correction rate — keep high to plant the nose.")]
+    [Range(0f, 1f)]
+    public float frontLateralGripRate = 0.90f;
+
+    [Tooltip("Rear lateral correction rate — VERY LOW for Burnout. 0.08-0.15.")]
+    [Range(0f, 1f)]
+    public float rearLateralGripRate = 0.10f;
+
+    [Header("Power Oversteer")]
+    [Tooltip("How much rear grip is lost at full throttle while cornering.")]
+    [Range(0f, 1f)]
+    public float throttleOversteerStrength = 0.95f;
+
+    [Tooltip("Steer fraction needed before throttle oversteer kicks in.")]
+    [Range(0f, 1f)]
+    public float oversteerSteerThreshold = 0.10f;
+
+    // ??????????????????????????????????????????????????????????????????
+    //  Wheel Transforms
+    // ??????????????????????????????????????????????????????????????????
+    [Header("Wheel Visual Transforms")]
     public Transform wheelFL;
     public Transform wheelFR;
-    public Transform wheelBL;
-    public Transform wheelBR;
+    public Transform wheelRL;
+    public Transform wheelRR;
 
-    private Collider[] selfColliders;
+    // ??????????????????????????????????????????????????????????????????
+    //  Private state
+    // ??????????????????????????????????????????????????????????????????
+    [HideInInspector] public int currentGear = 1;
+
     private Rigidbody rb;
+    private Collider[] selfColliders;
     private Transform[] wheels = new Transform[4];
-    private float[] wheelAngles = new float[4];
-    private float smoothSteer;
+    private Vector3[] wheelRestPos = new Vector3[4];
+
+    private float[] springCompression = new float[4];
     private bool[] grounded = new bool[4];
-    private float[] wheelCompression = new float[4];
+
+    private float smoothSteer;
+    private float[] wheelSpinAngle = new float[4];
+
+    private float throttleInput;
+    private float brakeInput;
+    private float rpmVelocity;
+    private float shiftCooldown;
+
+    private const int FL = 0, FR = 1, RL = 2, RR = 3;
+    private bool IsRearWheel(int i) => i == RL || i == RR;
+    private bool IsFrontWheel(int i) => i == FL || i == FR;
+
+    private float _rawThrottle;
+    private float _rawBrake;
+    private float _rawSteer;
+    private bool _handbrake;
+    private bool _clutch;
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Unity Lifecycle
+    // ??????????????????????????????????????????????????????????????????
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.mass = 1740f;
+        rb.mass = 1300f;
+        rb.centerOfMass = new Vector3(0f, -0.5f, -0.35f); // rear-biased
+        rb.angularDamping = 0.5f; // low — lets the car keep spinning in slides
 
-        rb.angularDamping = 5.0f;
-        rb.linearDamping = 0.05f;
-        rb.maxAngularVelocity = 7.0f;
-
-        rb.centerOfMass = new Vector3(0f, centerOfMassY, 0.1f);
         selfColliders = GetComponentsInChildren<Collider>();
-    }
 
-    void Start()
-    {
-        if (wheelFL == null) wheelFL = transform.Find(wheelFLName);
-        if (wheelFR == null) wheelFR = transform.Find(wheelFRName);
-        if (wheelBL == null) wheelBL = transform.Find(wheelBLName);
-        if (wheelBR == null) wheelBR = transform.Find(wheelBRName);
-    
-        wheels[0] = wheelFL;
-        wheels[1] = wheelFR;
-        wheels[2] = wheelBL;
-        wheels[3] = wheelBR;
+        wheels[FL] = wheelFL; wheels[FR] = wheelFR;
+        wheels[RL] = wheelRL; wheels[RR] = wheelRR;
+
+        for (int i = 0; i < 4; i++)
+            if (wheels[i] != null)
+                wheelRestPos[i] = transform.InverseTransformPoint(wheels[i].position);
     }
 
     void Update()
     {
-        HandleGears();
-        if (!isEngineOn && Input.GetKeyDown(KeyCode.E)) isEngineOn = true;
-    }
-
-    private void HandleGears()
-    {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) currentGear = 1;
-            else if (Input.GetKeyDown(KeyCode.Alpha2)) currentGear = 2;
-            else if (Input.GetKeyDown(KeyCode.Alpha3)) currentGear = 3;
-            else if (Input.GetKeyDown(KeyCode.Alpha4)) currentGear = 4;
-            else if (Input.GetKeyDown(KeyCode.Alpha5)) currentGear = 5;
-            else if (Input.GetKeyDown(KeyCode.Alpha6)) currentGear = 6;
-            else if (Input.GetKeyDown(KeyCode.Alpha0)) currentGear = 0;
-        }
+        ReadInputs();
     }
 
     void FixedUpdate()
     {
-        rb.centerOfMass = new Vector3(0f, centerOfMassY, 0.1f);
+        float speed = Vector3.Dot(rb.linearVelocity, transform.forward);
+        float absSpeed = Mathf.Abs(speed);
 
-        float h = Input.GetAxis("Horizontal");
+        ProcessSuspension();
+        UpdateEngineRPM(absSpeed);
+        if (autoShift) AutoShiftGears(absSpeed);
+        UpdateSteering(absSpeed);
+        ApplyTireForces(speed);
+        ApplyVelocitySteering();   // Burnout auto-rotation into slide
+        ApplyAntiRollBars();
+        UpdateWheelVisuals(speed);
+
+        shiftCooldown = Mathf.Max(0f, shiftCooldown - Time.fixedDeltaTime);
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Input
+    // ??????????????????????????????????????????????????????????????????
+
+    void ReadInputs()
+    {
         float v = Input.GetAxis("Vertical");
-        float speed = rb.linearVelocity.magnitude;
-        Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+        _rawThrottle = Mathf.Max(0f, v);
+        _rawBrake = Mathf.Max(0f, -v);
+        _rawSteer = Input.GetAxis("Horizontal");
+        _handbrake = Input.GetKey(KeyCode.Space);
+        _clutch = Input.GetKey(KeyCode.Tab);
 
-        bool clutchPressed = Input.GetKey(KeyCode.Tab);
-
-        if (isEngineOn && speed < stallThreshold && !clutchPressed && currentGear != 0 && Mathf.Abs(v) < 0.1f)
-            isEngineOn = false;
-
-        float gearMaxSpeed = maxSpeed * (currentGear / (float)maxGears);
-        if (clutchPressed || currentGear == 0)
-            currentRPM = Mathf.Lerp(currentRPM, Mathf.Abs(v) > 0.1f ? maxRPM : idleRPM, Time.fixedDeltaTime * 5f);
-        else
-            currentRPM = Mathf.Lerp(idleRPM, maxRPM, speed / Mathf.Max(gearMaxSpeed, 0.01f));
-
-        if (!isEngineOn) currentRPM = 0;
-
-        float steerAbility = Mathf.Lerp(stationarySteerAbility, 1f, speed / 5f);
-        float speedFactor = 1f / (1f + speed * steerSpeedDamping);
-        smoothSteer = Mathf.Lerp(smoothSteer, h * maxSteerAngle * speedFactor * steerAbility, Time.fixedDeltaTime * steerSpeed);
-
-        int groundedCount = 0;
-        for (int i = 0; i < 4; i++)
+        if (!isEngineOn && Input.GetKeyDown(KeyCode.E))
         {
-            if (wheels[i] == null) continue; 
-
-            Vector3 rayOrigin = wheels[i].position + transform.up * 0.5f;
-            RaycastHit[] hits = Physics.RaycastAll(rayOrigin, -transform.up, rideHeight + 0.5f + wheelRadius, groundLayer);
-
-            grounded[i] = false;
-            wheelCompression[i] = 0f;
-
-            foreach (var hit in hits)
-            {
-                bool isSelf = false;
-                foreach (var c in selfColliders) if (hit.collider == c) isSelf = true;
-                if (isSelf) continue;
-
-                grounded[i] = true;
-                groundedCount++;
-
-                wheelCompression[i] = 1f - ((hit.distance - 0.5f) / (rideHeight + wheelRadius));
-                float upVel = Vector3.Dot(transform.up, rb.GetPointVelocity(wheels[i].position));
-
-                float sForce = (wheelCompression[i] * springStrength) - (upVel * springDamper);
-                rb.AddForceAtPosition(transform.up * Mathf.Max(0f, sForce), wheels[i].position);
-
-                if (isEngineOn && !clutchPressed && i >= 2 && Mathf.Abs(v) > 0.01f && currentGear > 0 && speed < gearMaxSpeed)
-                    rb.AddForceAtPosition(transform.forward * v * engineForce * gearMultipliers[currentGear], wheels[i].position);
-
-                if (Input.GetKey(KeyCode.Space) || (Mathf.Abs(v) < 0.01f && speed > 0.1f))
-                    rb.AddForceAtPosition(-rb.linearVelocity.normalized * Mathf.Min(brakeForce, speed * rb.mass) * 0.25f, wheels[i].position);
-
-                float lateralVel = Vector3.Dot(transform.right, rb.GetPointVelocity(wheels[i].position));
-                rb.AddForceAtPosition(-transform.right * lateralVel * rb.mass * tireGrip * 0.25f, wheels[i].position, ForceMode.Impulse);
-                break;
-            }
+            isEngineOn = true;
+            currentRPM = idleRPM;
         }
 
-        ApplyAntiRoll(0, 1);
-        ApplyAntiRoll(2, 3);
-
-        if (groundedCount > 0)
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
-            float movingDir = Mathf.Sign(localVel.z);
-            if (speed < 0.1f) movingDir = 0;
-
-            float targetAngularY = (smoothSteer / maxSteerAngle) * turnSharpness * Mathf.Clamp01(speed / steerThreshold) * movingDir;
-            rb.angularVelocity = new Vector3(rb.angularVelocity.x * 0.9f, targetAngularY, rb.angularVelocity.z * 0.9f);
-
-            if (speed > 1f)
-            {
-                Vector3 velocityTarget = transform.forward * localVel.z;
-                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(velocityTarget.x, rb.linearVelocity.y, velocityTarget.z), velocityAlignStrength * Time.fixedDeltaTime);
-            }
-        }
-
-        UpdateWheelVisuals(speed, localVel.z);
-    }
-
-    private void ApplyAntiRoll(int leftIndex, int rightIndex)
-    {
-        if (grounded[leftIndex] && grounded[rightIndex])
-        {
-            float travelL = wheelCompression[leftIndex];
-            float travelR = wheelCompression[rightIndex];
-            float antiRollForceAmount = (travelL - travelR) * antiRollForce;
-
-            rb.AddForceAtPosition(transform.up * -antiRollForceAmount, wheels[leftIndex].position);
-            rb.AddForceAtPosition(transform.up * antiRollForceAmount, wheels[rightIndex].position);
+            if (Input.GetKeyDown(KeyCode.Minus)) SetGear(-1);
+            else if (Input.GetKeyDown(KeyCode.Alpha0)) SetGear(0);
+            else if (Input.GetKeyDown(KeyCode.Alpha1)) SetGear(1);
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) SetGear(2);
+            else if (Input.GetKeyDown(KeyCode.Alpha3)) SetGear(3);
+            else if (Input.GetKeyDown(KeyCode.Alpha4)) SetGear(4);
+            else if (Input.GetKeyDown(KeyCode.Alpha5)) SetGear(5);
+            else if (Input.GetKeyDown(KeyCode.Alpha6)) SetGear(6);
         }
     }
 
-    private void UpdateWheelVisuals(float speed, float forwardVel)
+    void SetGear(int gear)
     {
-        float dir = forwardVel >= 0f ? 1f : -1f;
+        currentGear = Mathf.Clamp(gear, -1, gearRatios.Length - 1);
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Suspension
+    // ??????????????????????????????????????????????????????????????????
+
+    void ProcessSuspension()
+    {
         for (int i = 0; i < 4; i++)
         {
             if (wheels[i] == null) continue;
-            wheelAngles[i] += speed * 18f * dir * Time.fixedDeltaTime;
-            wheels[i].localRotation = Quaternion.Euler(wheelAngles[i], (i < 2) ? smoothSteer : 0f, 0f);
+
+            Vector3 origin = wheels[i].position + transform.up * 0.1f;
+            float rayLen = rideHeight + wheelRadius + 0.1f;
+
+            RaycastHit hit;
+            if (Physics.Raycast(origin, -transform.up, out hit, rayLen, groundLayer)
+                && !IsSelf(hit.collider))
+            {
+                grounded[i] = true;
+
+                float restDist = rideHeight + wheelRadius;
+                float curDist = hit.distance - 0.1f;
+                float compress = restDist - curDist;
+                springCompression[i] = Mathf.Clamp(compress, 0f, rideHeight);
+
+                float velUp = Vector3.Dot(transform.up, rb.GetPointVelocity(wheels[i].position));
+                float sForce = springCompression[i] * springStrength - velUp * springDamper;
+                rb.AddForceAtPosition(transform.up * Mathf.Max(0f, sForce), wheels[i].position);
+            }
+            else
+            {
+                grounded[i] = false;
+                springCompression[i] = 0f;
+            }
         }
     }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Engine & Gearbox
+    // ??????????????????????????????????????????????????????????????????
+
+    void UpdateEngineRPM(float absSpeed)
+    {
+        if (!isEngineOn)
+        {
+            currentRPM = Mathf.MoveTowards(currentRPM, 0f, 500f * Time.fixedDeltaTime);
+            return;
+        }
+
+        bool neutral = currentGear == 0 || _clutch;
+
+        float targetRPM;
+        if (neutral)
+        {
+            targetRPM = Mathf.Lerp(idleRPM, rpmLimiter, _rawThrottle);
+        }
+        else
+        {
+            float ratio = gearRatios[GearArrayIndex()] * finalDriveRatio;
+            float wheelOmega = absSpeed / Mathf.Max(wheelRadius, 0.01f);
+            float engineOmega = wheelOmega * Mathf.Abs(ratio);
+            targetRPM = Mathf.Clamp(engineOmega * 60f / (2f * Mathf.PI), idleRPM, rpmLimiter);
+        }
+
+        currentRPM = Mathf.SmoothDamp(currentRPM, targetRPM, ref rpmVelocity,
+                                       neutral ? 0.05f : 0.12f);
+    }
+
+    void AutoShiftGears(float absSpeed)
+    {
+        if (!isEngineOn || _clutch || currentGear < 1 || shiftCooldown > 0f) return;
+
+        if (currentRPM >= upshiftRPM && currentGear < gearRatios.Length - 1)
+        {
+            currentGear++;
+            shiftCooldown = 0.4f;
+            return;
+        }
+        if (currentRPM <= downshiftRPM && currentGear > 1)
+        {
+            currentGear--;
+            shiftCooldown = 0.3f;
+        }
+    }
+
+    int GearArrayIndex()
+    {
+        if (currentGear == -1) return 0;
+        return Mathf.Clamp(currentGear, 0, gearRatios.Length - 1);
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Steering
+    // ??????????????????????????????????????????????????????????????????
+
+    void UpdateSteering(float absSpeed)
+    {
+        float speedFactor = 1f / (1f + absSpeed * steerSpeedDamping);
+        float targetSteer = _rawSteer * maxSteerAngle * speedFactor;
+        smoothSteer = Mathf.Lerp(smoothSteer, targetSteer, Time.fixedDeltaTime * steerSpeed * 10f);
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Velocity Steering — the Burnout magic
+    // ??????????????????????????????????????????????????????????????????
+
+    /// <summary>
+    /// Burnout rotates the car body toward its actual velocity direction
+    /// while sliding. This makes the car feel like it "flows" around corners
+    /// instead of fighting physics. The player still controls the angle via
+    /// throttle and steering, but the car helps them automatically.
+    /// </summary>
+    void ApplyVelocitySteering()
+    {
+        if (rb.linearVelocity.sqrMagnitude < 1f) return;
+
+        // Angle between where the car faces and where it's actually going
+        Vector3 flatVel = Vector3.ProjectOnPlane(rb.linearVelocity, transform.up);
+        float slipAngle = Vector3.SignedAngle(transform.forward, flatVel.normalized, transform.up);
+
+        // Fraction of full slide (0 = straight, 1 = 90 degrees sideways)
+        float slideFraction = Mathf.Clamp01(Mathf.Abs(slipAngle) / 90f);
+
+        if (slideFraction < 0.05f) return; // not sliding enough to bother
+
+        // Steer input boosts the auto-rotation slightly — feels like you're in control
+        float steerBoost = 1f + Mathf.Abs(_rawSteer) * 0.5f;
+        float correctionRate = velocitySteerSpeed * velocitySteerStrength
+                               * slideFraction * steerBoost;
+
+        // Blend angular velocity toward the corrective rotation
+        float currentYaw = rb.angularVelocity.y;
+        float targetYaw = slipAngle * correctionRate * Mathf.Deg2Rad;
+        float newYaw = Mathf.Lerp(currentYaw, targetYaw, Time.fixedDeltaTime * 6f);
+
+        rb.angularVelocity = new Vector3(
+            rb.angularVelocity.x,
+            newYaw,
+            rb.angularVelocity.z
+        );
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Tire Forces
+    // ??????????????????????????????????????????????????????????????????
+
+    void ApplyTireForces(float signedSpeed)
+    {
+        throttleInput = Mathf.MoveTowards(throttleInput, _rawThrottle, Time.fixedDeltaTime / 0.08f);
+        brakeInput = Mathf.MoveTowards(brakeInput, _rawBrake, Time.fixedDeltaTime / 0.06f);
+
+        bool driving = isEngineOn && !_clutch && currentGear != 0;
+        bool reverse = currentGear == -1;
+        float ratio = gearRatios[GearArrayIndex()] * finalDriveRatio;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (wheels[i] == null || !grounded[i]) continue;
+
+            float steerY = IsFrontWheel(i) ? smoothSteer : 0f;
+            Quaternion wRot = transform.rotation * Quaternion.Euler(0f, steerY, 0f);
+            Vector3 wFwd = wRot * Vector3.forward;
+            Vector3 wRight = wRot * Vector3.right;
+            Vector3 pointVel = rb.GetPointVelocity(wheels[i].position);
+
+            // ?? 1. Drive (RWD: rear only) ??
+            if (driving && IsRearWheel(i) && throttleInput > 0.01f)
+            {
+                if (Mathf.Abs(signedSpeed) < maxSpeed || (reverse && signedSpeed > 0.1f))
+                {
+                    float rpmFactor = currentRPM < rpmLimiter ? 1f : 0f;
+                    float driveTorque = throttleInput * engineTorque * Mathf.Abs(ratio) * rpmFactor;
+                    float driveForce = driveTorque / Mathf.Max(wheelRadius, 0.01f) * 0.5f;
+                    rb.AddForceAtPosition((reverse ? -wFwd : wFwd) * driveForce, wheels[i].position);
+                }
+            }
+
+            // ?? 2. Engine braking ??
+            if (driving && IsRearWheel(i) && !reverse && throttleInput < 0.05f && brakeInput < 0.05f)
+            {
+                float ebForce = rb.mass * engineBraking * Mathf.Abs(ratio) * 0.5f;
+                if (rb.linearVelocity.sqrMagnitude > 0.01f)
+                    rb.AddForceAtPosition(-rb.linearVelocity.normalized * ebForce, wheels[i].position);
+            }
+
+            // ?? 3. Braking ??
+            if (brakeInput > 0.01f && rb.linearVelocity.sqrMagnitude > 0.01f)
+            {
+                float bTorque = (_handbrake && IsRearWheel(i)) ? handbrakeTorque : brakeTorque;
+                float bForce = bTorque * brakeInput / Mathf.Max(wheelRadius, 0.01f) * 0.25f;
+                rb.AddForceAtPosition(-rb.linearVelocity.normalized * bForce, wheels[i].position);
+            }
+
+            if (_handbrake && IsRearWheel(i) && brakeInput < 0.01f && rb.linearVelocity.sqrMagnitude > 0.01f)
+            {
+                float bForce = handbrakeTorque / Mathf.Max(wheelRadius, 0.01f) * 0.25f;
+                rb.AddForceAtPosition(-rb.linearVelocity.normalized * bForce, wheels[i].position);
+            }
+
+            // ?? 4. Lateral friction — separate front/rear values ??
+            float lateralVel = Vector3.Dot(wRight, pointVel);
+            float grip;
+            float gripRate;
+
+            if (IsRearWheel(i))
+            {
+                // Rear: very low grip — slides freely
+                grip = rearTireFriction;
+                gripRate = rearLateralGripRate;
+
+                if (_handbrake)
+                {
+                    // Handbrake nearly kills all rear grip
+                    grip = handbrakeTireFriction;
+                    gripRate = rearLateralGripRate * 0.3f;
+                }
+                else if (driving && !reverse && throttleInput > 0.05f)
+                {
+                    // Throttle oversteer: grip drops further with throttle + steering
+                    float steerAmt = Mathf.Abs(smoothSteer) / Mathf.Max(maxSteerAngle, 0.01f);
+                    float steerFactor = Mathf.InverseLerp(oversteerSteerThreshold, 1f, steerAmt);
+                    float gripLoss = throttleInput * throttleOversteerStrength * steerFactor;
+                    grip = Mathf.Lerp(rearTireFriction, handbrakeTireFriction, gripLoss);
+                }
+            }
+            else
+            {
+                // Front: higher grip — keeps the nose planted so you can steer
+                grip = frontTireFriction;
+                gripRate = frontLateralGripRate;
+            }
+
+            float corrective = -lateralVel * grip * gripRate * rb.mass * 0.25f;
+            rb.AddForceAtPosition(wRight * corrective / Time.fixedDeltaTime, wheels[i].position);
+        }
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Anti-Roll Bars
+    // ??????????????????????????????????????????????????????????????????
+
+    void ApplyAntiRollBars()
+    {
+        ApplyAntiRoll(FL, FR);
+        ApplyAntiRoll(RL, RR);
+    }
+
+    void ApplyAntiRoll(int left, int right)
+    {
+        if (!grounded[left] && !grounded[right]) return;
+        float lc = grounded[left] ? springCompression[left] : 0f;
+        float rc = grounded[right] ? springCompression[right] : 0f;
+        float torque = (lc - rc) * antiRollForce;
+        if (grounded[left]) rb.AddForceAtPosition(transform.up * -torque, wheels[left].position);
+        if (grounded[right]) rb.AddForceAtPosition(transform.up * torque, wheels[right].position);
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Wheel Visuals
+    // ??????????????????????????????????????????????????????????????????
+
+    void UpdateWheelVisuals(float signedSpeed)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (wheels[i] == null) continue;
+
+            float degreesPerSecond = (signedSpeed / (2f * Mathf.PI * wheelRadius)) * 360f;
+            wheelSpinAngle[i] += degreesPerSecond * Time.fixedDeltaTime;
+
+            float steerAngle = IsFrontWheel(i) ? smoothSteer : 0f;
+            wheels[i].localRotation = Quaternion.Euler(wheelSpinAngle[i], steerAngle, 0f);
+
+            if (grounded[i])
+            {
+                Vector3 lp = wheelRestPos[i];
+                lp.y += springCompression[i] - rideHeight * 0.5f;
+                wheels[i].localPosition = lp;
+            }
+        }
+    }
+
+    #endregion
+
+    // ??????????????????????????????????????????????????????????????????
+    #region Helpers
+    // ??????????????????????????????????????????????????????????????????
+
+    bool IsSelf(Collider col)
+    {
+        foreach (var c in selfColliders)
+            if (col == c) return true;
+        return false;
+    }
+
+    #endregion
+
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        if (wheels == null) return;
+        for (int i = 0; i < 4; i++)
+        {
+            if (wheels[i] == null) continue;
+            Gizmos.color = grounded[i] ? Color.green : Color.red;
+            Vector3 origin = wheels[i].position + transform.up * 0.1f;
+            Gizmos.DrawLine(origin, origin - transform.up * (rideHeight + wheelRadius + 0.1f));
+            Gizmos.DrawWireSphere(wheels[i].position, wheelRadius * 0.15f);
+        }
+    }
+#endif
 }

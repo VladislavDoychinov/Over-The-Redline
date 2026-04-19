@@ -760,7 +760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 477fe5666c2beaa4bb086d825fb021d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RPMGauge
-  car: {fileID: 2016560103601462138}
+  car: {fileID: 0}
   minRPMAngle: 140
   maxRPMAngle: -120
   needleSmoothness: 2
@@ -1188,7 +1188,7 @@ PrefabInstance:
       addedObject: {fileID: -4960249307829356376}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2016560103601462138}
+      addedObject: {fileID: -2509316876607118221}
   m_SourcePrefab: {fileID: 100100000, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}
 --- !u!4 &2408849285511016784 stripped
 Transform:
@@ -1216,7 +1216,7 @@ Rigidbody:
   m_Mass: 1740
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_CenterOfMass: {x: 0, y: -0.9, z: -0.3}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -1225,7 +1225,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -1253,7 +1253,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 1.25, z: 5.4}
   m_Center: {x: 0, y: 0, z: -0.8}
---- !u!114 &2016560103601462138
+--- !u!114 &-2509316876607118221
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1266,48 +1266,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
   isEngineOn: 1
-  stallThreshold: 0.2
-  currentGear: 1
-  maxGears: 6
-  gearMultipliers:
-  - 0
-  - 0.4
-  - 0.6
-  - 0.8
-  - 1
-  - 1.15
-  - 1.3
+  idleRPM: 850
+  maxRPM: 7000
+  rpmLimiter: 7200
+  throttleResponse: 0.2
+  engineBraking: 0.008
   currentRPM: 0
-  maxRPM: 8000
-  idleRPM: 1200
-  engineForce: 5000
-  maxSpeed: 50
-  brakeForce: 25000
-  maxSteerAngle: 35
-  steerSpeed: 10
-  turnSharpness: 2.5
-  steerSpeedDamping: 0.04
-  steerThreshold: 0.5
-  stationarySteerAbility: 0.1
-  rideHeight: 0
-  springDamper: 45000
-  springStrength: 60000
-  antiRollForce: 40000
-  wheelRadius: 0.3
+  gearRatios:
+  - -3.5
+  - 3.8
+  - 2.2
+  - 1.5
+  - 1.1
+  - 0.85
+  - 0.7
+  finalDriveRatio: 3.7
+  engineTorque: 400
+  maxSpeed: 60
+  autoShift: 1
+  upshiftRPM: 6200
+  downshiftRPM: 2000
+  brakeTorque: 1200
+  handbrakeTorque: 2500
+  maxSteerAngle: 40
+  steerSpeed: 5
+  steerSpeedDamping: 0.008
+  velocitySteerStrength: 0.92
+  velocitySteerSpeed: 4.5
+  rideHeight: 0.1
+  springStrength: 40000
+  springDamper: 3000
+  antiRollForce: 5000
+  wheelRadius: 0.33
   groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
-  tireGrip: 1
-  velocityAlignStrength: 10
-  centerOfMassY: -1
-  frontLeftName: WheelFL_LOD0
-  frontRightName: WheelFR_LOD0
-  backLeftName: WheelBL_LOD0
-  backRightName: WheelBR_LOD0
+  frontTireFriction: 0.85
+  rearTireFriction: 0.15
+  handbrakeTireFriction: 0.02
+  frontLateralGripRate: 0.9
+  rearLateralGripRate: 0.1
+  throttleOversteerStrength: 0.95
+  oversteerSteerThreshold: 0.1
   wheelFL: {fileID: 4523328662573019823}
   wheelFR: {fileID: 5623054999815828051}
-  wheelBL: {fileID: 8079028270615259333}
-  wheelBR: {fileID: 5574338429671976822}
+  wheelRL: {fileID: 8079028270615259333}
+  wheelRR: {fileID: 5574338429671976822}
+  currentGear: 1
 --- !u!4 &5574338429671976822 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 190064773579482016, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}

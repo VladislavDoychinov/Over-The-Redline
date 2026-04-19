@@ -10,8 +10,8 @@ public class CameraViewSwitcher : MonoBehaviour
 
     [Header("Offsets")]
     public Vector3 thirdPersonOffset = new Vector3(0, 1.5f, -4.4f);
-    public Vector3 firstPersonOffset = new Vector3(-0.2f, 0.3f, -0.24f);
-    public Vector3 secondPersonOffset = new Vector3(-0.6f, -0.1f, 0.1f);
+    public Vector3 firstPersonOffset = new Vector3(-0.15f, 0.3f, 0.1f);
+    public Vector3 secondPersonOffset = new Vector3(-0.6f, 0f, 0.4f);
 
     [Header("Mouse Look Settings")]
     public float mouseSensitivity = 2.0f;
@@ -26,19 +26,42 @@ public class CameraViewSwitcher : MonoBehaviour
 
     void Start()
     {
+        ApplyCarSpecificOffsets();
+
         UpdateUIVisibility();
         Cursor.lockState = CursorLockMode.Locked;
+
+        FindActiveCar();
+    }
+
+    private void ApplyCarSpecificOffsets()
+    {
+        if (CarSwitcher.SelectedCarID == 1)
+        {
+            thirdPersonOffset = new Vector3(0, 1.5f, -4.4f);
+            firstPersonOffset = new Vector3(-0.2f, 0.3f, -0.24f);
+            secondPersonOffset = new Vector3(-0.6f, -0.1f, 0.1f);
+        }
+        else
+        {
+            thirdPersonOffset = new Vector3(0, 1.5f, -5.0f);
+            firstPersonOffset = new Vector3(-0.15f, 0.3f, 0.1f);
+            secondPersonOffset = new Vector3(-0.6f, 0f, 0.4f);
+        }
     }
 
     void Update()
     {
+        if (carTransform == null || !carTransform.gameObject.activeInHierarchy)
+        {
+            FindActiveCar();
+        }
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             cameraMode = (cameraMode + 1) % 3;
-
             yaw = 0f;
             pitch = 0f;
-
             UpdateUIVisibility();
             SnapToTarget();
         }
@@ -46,6 +69,20 @@ public class CameraViewSwitcher : MonoBehaviour
         if (cameraMode != 0)
         {
             HandleMouseLook();
+        }
+    }
+
+    private void FindActiveCar()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject p in players)
+        {
+            if (p.activeInHierarchy)
+            {
+                carTransform = p.transform;
+                ApplyCarSpecificOffsets();
+                break;
+            }
         }
     }
 

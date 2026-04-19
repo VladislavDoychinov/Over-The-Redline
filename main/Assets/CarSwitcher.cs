@@ -10,40 +10,41 @@ public class CarSwitcher : MonoBehaviour
 
     void Start()
     {
-        LockCar(car1);
-        LockCar(car2);
-
-        if (SelectedCarID == 1)
+        if (car1 == null || car2 == null)
         {
-            ShowCar1();
+            Debug.LogError("CarSwitcher: Please assign both Car 1 and Car 2 in the Inspector!");
+            return;
         }
-        else
-        {
-            ShowCar2();
-        }
-    }
 
-    private void LockCar(GameObject car)
-    {
-        //Rigidbody rb = car.GetComponent<Rigidbody>();
-        //if (rb != null)
-        //{
-        //    rb.isKinematic = true;
-        //}
+        UpdateCarVisibility();
     }
 
     public void ShowCar1()
     {
-        car1.SetActive(true);
-        car2.SetActive(false);
         SelectedCarID = 1;
+        UpdateCarVisibility();
     }
 
     public void ShowCar2()
     {
-        car1.SetActive(false);
-        car2.SetActive(true);
         SelectedCarID = 2;
+        UpdateCarVisibility();
+    }
+
+    private void UpdateCarVisibility()
+    {
+        if (SelectedCarID == 1)
+        {
+            car1.SetActive(true);
+            car2.SetActive(false);
+        }
+        else
+        {
+            car1.SetActive(false);
+            car2.SetActive(true);
+        }
+
+        Debug.Log($"Car {SelectedCarID} is now active.");
     }
 
     public void StartRace()
