@@ -10,6 +10,7 @@ public class CarController : MonoBehaviour
     public float maxRPM = 7000f;
     public float rpmLimiter = 6500f;
     public float currentRPM;
+    public float maxSpeedKMH = 200f;
 
     [Header("Manual Transmission")]
     public float[] gearRatios = { -3.0f, 3.2f, 1.9f, 1.3f, 1.0f, 0.8f, 0.65f };
@@ -17,8 +18,9 @@ public class CarController : MonoBehaviour
     [Range(-1, 6)] public int currentGear = 0;
 
     [Header("Brakes")]
-    public float brakeTorque = 4000f;
-    public float handbrakeTorque = 8000f;
+    public float brakeTorque = 5000f; // Force applied when pressing Down Arrow
+    public float handbrakeTorque = 10000f; // Force applied when pressing Space
+    public float stopThreshold = 0.5f; // Speed below which the car "locks" to zero
 
     [Header("Steering & Physics")]
     public float maxSteerAngle = 40f;
@@ -39,7 +41,6 @@ public class CarController : MonoBehaviour
     [Header("Visuals & Effects")]
     public Transform wheelFL; public Transform wheelFR;
     public Transform wheelRL; public Transform wheelRR;
-    [Tooltip("Drag your 4 TrailRenderers here. MUST be children of the CAR, not wheels.")]
     public TrailRenderer[] tireTrails = new TrailRenderer[4];
     public float skidThreshold = 2.5f;
 
@@ -86,15 +87,16 @@ public class CarController : MonoBehaviour
         ApplyGearsAndEngine(speed);
         ApplySteering(speed);
         ApplyTireForces(speed);
+        ApplyBrakes(speed); // NEW: Dedicated braking logic
         UpdateWheelVisuals(speed);
     }
 
     void HandleInputs()
     {
         throttleInput = Mathf.Clamp01(Input.GetAxis("Vertical"));
-        brakeInput = Mathf.Clamp01(-Input.GetAxis("Vertical"));
+        brakeInput = Mathf.Clamp01(-Input.GetAxis("Vertical")); // Arrow Down or S
         steerInput = Input.GetAxis("Horizontal");
-        handbrakeInput = Input.GetKey(KeyCode.Space);
+        handbrakeInput = Input.GetKey(KeyCode.Space); // Space key
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -106,6 +108,30 @@ public class CarController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Alpha4)) currentGear = 4;
             else if (Input.GetKeyDown(KeyCode.Alpha5)) currentGear = 5;
             else if (Input.GetKeyDown(KeyCode.Alpha6)) currentGear = 6;
+        }
+    }
+
+    void ApplyBrakes(float speed)
+    {
+        // 1. Calculate how much braking force to apply
+        float totalBrakeForce = 0f;
+
+        if (brakeInput > 0.1f)
+            totalBrakeForce = brakeInput * brakeTorque;
+        else if (handbrakeInput)
+            totalBrakeForce = handbrakeTorque;
+
+        // 2. Apply counter-force to slow down
+        if (totalBrakeForce > 0)
+        {
+            rb.AddForce(-transform.forward * totalBrakeForce * Mathf.Sign(speed));
+        }
+
+        // 3. COMPLETE STOP: If car is moving very slowly and braking, force it to zero
+        if (Mathf.Abs(speed) < stopThreshold && (brakeInput > 0.1f || handbrakeInput))
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 
@@ -146,6 +172,8 @@ public class CarController : MonoBehaviour
     void ApplyGearsAndEngine(float speed)
     {
         if (!isEngineOn) { currentRPM = 0; return; }
+        float currentSpeedKMH = speed * 3.6f;
+
         if (currentGear == 0)
         {
             currentRPM = Mathf.Lerp(currentRPM, Mathf.Lerp(idleRPM, maxRPM, throttleInput), Time.fixedDeltaTime * 5f);
@@ -156,7 +184,8 @@ public class CarController : MonoBehaviour
             float wheelRPM = (Mathf.Abs(speed) * 60f) / (2f * Mathf.PI * wheelRadius);
             currentRPM = Mathf.Clamp(wheelRPM * Mathf.Abs(gearRatio) * finalDriveRatio, idleRPM, maxRPM);
 
-            if (currentRPM < rpmLimiter && throttleInput > 0.01f)
+            // Only apply gas if not braking heavily
+            if (currentRPM < rpmLimiter && throttleInput > 0.01f && currentSpeedKMH < maxSpeedKMH && brakeInput < 0.5f)
             {
                 float wheelForce = (throttleInput * engineTorque * gearRatio * finalDriveRatio) / wheelRadius;
                 rb.AddForceAtPosition(transform.forward * wheelForce, (wheels[RL].position + wheels[RR].position) / 2f);

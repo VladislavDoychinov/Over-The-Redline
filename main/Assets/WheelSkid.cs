@@ -4,7 +4,7 @@ public class WheelSkid : MonoBehaviour
 {
     private TrailRenderer trail;
     private CarController car;
-    public int wheelIndex; // 0=FL, 1=FR, 2=RL, 3=RR
+    public int wheelIndex;
 
     void Start()
     {
@@ -16,7 +16,6 @@ public class WheelSkid : MonoBehaviour
     {
         if (car == null) return;
 
-        // Checks the functions inside CarController
         if (car.IsWheelGrounded(wheelIndex) && car.IsSkidding(wheelIndex))
         {
             trail.emitting = true;

@@ -1907,6 +1907,7 @@ MonoBehaviour:
   maxRPM: 7000
   rpmLimiter: 6500
   currentRPM: 0
+  maxSpeedKMH: 160
   gearRatios:
   - -3
   - 3.2
@@ -1919,11 +1920,12 @@ MonoBehaviour:
   currentGear: 0
   brakeTorque: 4000
   handbrakeTorque: 8000
+  stopThreshold: 0.5
   maxSteerAngle: 40
   steerSpeed: 5
   speedSteerDamping: 0.05
-  frontGrip: 1.15
-  baseRearGrip: 0.65
+  frontGrip: 1
+  baseRearGrip: 0.8
   sideFrictionDamping: 0.22
   oversteerFactor: 0.4
   rideHeight: 0.05
