@@ -492,8 +492,8 @@ MonoBehaviour:
   carTransform: {fileID: 0}
   gaugeUI: {fileID: 631168451}
   thirdPersonOffset: {x: 0, y: 1.5, z: -4.4}
-  firstPersonOffset: {x: -0.2, y: 0.3, z: -0.24}
-  secondPersonOffset: {x: -0.6, y: -0.1, z: 0.1}
+  firstPersonOffset: {x: -0.15, y: 0.3, z: 0.1}
+  secondPersonOffset: {x: -0.6, y: 0, z: 0.4}
   mouseSensitivity: 2
   maxLookAngle: 60
   snapStiffness: 100
@@ -2219,9 +2219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RPMGauge
   car: {fileID: 0}
-  minRPMAngle: 140
+  minRPMAngle: 120
   maxRPMAngle: -120
-  needleSmoothness: 2
+  needleSmoothness: 5
 --- !u!1 &947365095
 GameObject:
   m_ObjectHideFlags: 0

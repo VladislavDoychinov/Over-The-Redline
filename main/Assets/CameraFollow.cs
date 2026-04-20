@@ -44,7 +44,7 @@ public class CameraViewSwitcher : MonoBehaviour
         }
         else
         {
-            thirdPersonOffset = new Vector3(0, 1.5f, -5.0f);
+            thirdPersonOffset = new Vector3(0, 1.5f, -4.0f);
             firstPersonOffset = new Vector3(-0.15f, 0.3f, 0.1f);
             secondPersonOffset = new Vector3(-0.6f, 0f, 0.4f);
         }
@@ -64,6 +64,15 @@ public class CameraViewSwitcher : MonoBehaviour
             pitch = 0f;
             UpdateUIVisibility();
             SnapToTarget();
+        }
+
+        if (cameraMode == 0)
+        {
+            snapStiffness = 50f;
+        }
+        else
+        {
+            snapStiffness = 100f;
         }
 
         if (cameraMode != 0)

@@ -1901,13 +1901,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d832406b5e88491488ca08005a640ffa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
+  driveTrain: 1
+  driftLevel: 0.76
   isEngineOn: 1
-  engineTorque: 300
+  maxTorqueNM: 366
   idleRPM: 800
+  peakTorqueRPM: 2200
   maxRPM: 7000
   rpmLimiter: 6500
   currentRPM: 0
-  maxSpeedKMH: 160
   gearRatios:
   - -3
   - 3.2
@@ -1917,17 +1919,14 @@ MonoBehaviour:
   - 0.8
   - 0.65
   finalDriveRatio: 3.6
-  currentGear: 0
-  brakeTorque: 4000
-  handbrakeTorque: 8000
+  currentGear: 1
+  automaticGears: 1
+  brakeTorque: 5000
+  handbrakeTorque: 12000
   stopThreshold: 0.5
   maxSteerAngle: 40
-  steerSpeed: 5
+  steerSpeed: 8
   speedSteerDamping: 0.05
-  frontGrip: 1
-  baseRearGrip: 0.8
-  sideFrictionDamping: 0.22
-  oversteerFactor: 0.4
   rideHeight: 0.05
   springStrength: 50000
   springDamper: 5000
@@ -1942,7 +1941,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  skidThreshold: 2.5
 --- !u!4 &5574338429671976822 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 190064773579482016, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}

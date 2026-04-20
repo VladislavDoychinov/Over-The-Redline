@@ -1615,7 +1615,6 @@ GameObject:
   - component: {fileID: 4045448285641590}
   - component: {fileID: 33341535081596014}
   - component: {fileID: 23248330470771712}
-  - component: {fileID: 543622690760982301}
   m_Layer: 0
   m_Name: Mirrors
   m_TagString: Untagged
@@ -1672,6 +1671,8 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: f8fe1b690186388428c994e3afb6a30b, type: 2}
+  - {fileID: 2100000, guid: a5e71cdd18ed5394ca8a603374dc0056, type: 2}
+  - {fileID: 2100000, guid: 23fdd5432af356b428e99e05522d4051, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1695,18 +1696,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &543622690760982301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368583581644466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0220bc6b6515a0428c7030d0f65aab0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MirrorInverterURP
 --- !u!1 &1388379768011644
 GameObject:
   m_ObjectHideFlags: 0
@@ -3340,37 +3329,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d832406b5e88491488ca08005a640ffa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
+  driveTrain: 2
+  driftLevel: 0
   isEngineOn: 1
-  engineTorque: 393
-  idleRPM: 1000
-  maxRPM: 8000
+  maxTorqueNM: 392
+  idleRPM: 800
+  peakTorqueRPM: 4400
+  maxRPM: 7500
   rpmLimiter: 7000
   currentRPM: 0
-  maxSpeedKMH: 193
   gearRatios:
-  - -3
-  - 3.2
-  - 1.9
-  - 1.3
-  - 1
-  - 0.8
-  - 0.65
-  finalDriveRatio: 3.6
+  - -3.2
+  - 3.5
+  - 2.1
+  - 1.45
+  - 1.1
+  - 0.85
+  - 0.68
+  finalDriveRatio: 3.5
   currentGear: 1
-  brakeTorque: 4000
-  handbrakeTorque: 8000
-  maxSteerAngle: 40
+  automaticGears: 0
+  brakeTorque: 8000
+  handbrakeTorque: 15000
+  stopThreshold: 0.6
+  maxSteerAngle: 35
   steerSpeed: 7
-  speedSteerDamping: 0.05
-  frontGrip: 1.15
-  baseRearGrip: 0.65
-  sideFrictionDamping: 0.22
-  oversteerFactor: 0.3
-  rideHeight: 0.05
-  springStrength: 25000
-  springDamper: 6000
+  speedSteerDamping: 1
+  rideHeight: 0.01
+  springStrength: 45000
+  springDamper: 25000
   wheelRadius: 0.3
-  centerOfMassOffset: {x: 0, y: -0.6, z: -0.1}
+  centerOfMassOffset: {x: 0, y: -0.6, z: 0}
   wheelFL: {fileID: 4484528274142068}
   wheelFR: {fileID: 4981666998271360}
   wheelRL: {fileID: 4910949945621414}
@@ -3380,7 +3369,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  skidThreshold: 2.5
 --- !u!1 &1708700505944424
 GameObject:
   m_ObjectHideFlags: 0
@@ -4707,8 +4695,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5617776224502635274}
   - component: {fileID: 2439204868371901043}
-  - component: {fileID: 9147136411736996293}
   - component: {fileID: 4212702257264596269}
+  - component: {fileID: 5177891636090093006}
   m_Layer: 0
   m_Name: LeftMirrorCamera1
   m_TagString: Untagged
@@ -4764,7 +4752,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 40
+  field of view: 100
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -4772,7 +4760,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: d8503443a7de0c24da6663867e8651ed, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -4782,14 +4770,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &9147136411736996293
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6433159461766089174}
-  m_Enabled: 0
 --- !u!114 &4212702257264596269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4834,6 +4814,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &5177891636090093006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6433159461766089174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0220bc6b6515a0428c7030d0f65aab0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MirrorInverterURP
 --- !u!1 &6503930736741699540
 GameObject:
   m_ObjectHideFlags: 0
@@ -4844,8 +4836,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6504701222481478734}
   - component: {fileID: 2762568074014663543}
-  - component: {fileID: 4608716115680951783}
   - component: {fileID: 3705330497401951861}
+  - component: {fileID: 2201600578705103369}
   m_Layer: 0
   m_Name: RightMirrorCamera1
   m_TagString: Untagged
@@ -4901,7 +4893,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 40
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -4909,7 +4901,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 037772bb9a6b4854cb42c1bf04168711, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -4919,14 +4911,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &4608716115680951783
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6503930736741699540}
-  m_Enabled: 0
 --- !u!114 &3705330497401951861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4934,7 +4918,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6503930736741699540}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
@@ -4971,6 +4955,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &2201600578705103369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6503930736741699540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0220bc6b6515a0428c7030d0f65aab0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MirrorInverterURP
 --- !u!1 &8019740264210274268
 GameObject:
   m_ObjectHideFlags: 0
@@ -5137,8 +5133,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1218824926501732229}
   - component: {fileID: 8432163958004053907}
-  - component: {fileID: 9048785483521137812}
   - component: {fileID: 3793736514387534890}
+  - component: {fileID: 3843872842675064337}
   m_Layer: 0
   m_Name: RearViewMirrorCamera1
   m_TagString: Untagged
@@ -5202,7 +5198,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 2e563835fa9c13b4d9064297101d1a32, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -5212,14 +5208,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &9048785483521137812
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8440992799393370969}
-  m_Enabled: 0
 --- !u!114 &3793736514387534890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5264,3 +5252,15 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &3843872842675064337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8440992799393370969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0220bc6b6515a0428c7030d0f65aab0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MirrorInverterURP

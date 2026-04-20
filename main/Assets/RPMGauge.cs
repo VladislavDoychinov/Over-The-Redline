@@ -6,7 +6,7 @@ public class RPMGauge : MonoBehaviour
     public CarController car;
 
     [Header("Angles")]
-    public float minRPMAngle = 140f;
+    public float minRPMAngle = 120f;
     public float maxRPMAngle = -120f;
 
     [Header("Smoothing")]

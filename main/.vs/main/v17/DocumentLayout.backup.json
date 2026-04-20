@@ -7,6 +7,18 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\CarController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\WheelSkid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\WheelSkid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\MainCameraSure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\MainCameraSure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\TrackSpawner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\TrackSpawner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\RPMGauge.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\RPMGauge.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -17,14 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CarSwitcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\CarSwitcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\MainCameraSure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\MainCameraSure.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\TrackSpawner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\TrackSpawner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,11 +38,23 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
+              "Title": "WheelSkid.cs",
+              "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\WheelSkid.cs",
+              "RelativeDocumentMoniker": "Assets\\WheelSkid.cs",
+              "ToolTip": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\WheelSkid.cs",
+              "RelativeToolTip": "Assets\\WheelSkid.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-20T06:51:40.694Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "MainCameraSure.cs",
               "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\MainCameraSure.cs",
               "RelativeDocumentMoniker": "Assets\\MainCameraSure.cs",
@@ -50,7 +66,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "CarSwitcher.cs",
               "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CarSwitcher.cs",
               "RelativeDocumentMoniker": "Assets\\CarSwitcher.cs",
@@ -62,19 +78,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "TrackSpawner.cs",
               "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\TrackSpawner.cs",
               "RelativeDocumentMoniker": "Assets\\TrackSpawner.cs",
               "ToolTip": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\TrackSpawner.cs",
               "RelativeToolTip": "Assets\\TrackSpawner.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-18T11:01:46.999Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "CameraFollow.cs",
               "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CameraFollow.cs",
               "RelativeDocumentMoniker": "Assets\\CameraFollow.cs",
@@ -86,7 +102,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "RPMGauge.cs",
               "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\RPMGauge.cs",
               "RelativeDocumentMoniker": "Assets\\RPMGauge.cs",
@@ -104,7 +120,7 @@
               "RelativeDocumentMoniker": "Assets\\CarController.cs",
               "ToolTip": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CarController.cs",
               "RelativeToolTip": "Assets\\CarController.cs",
-              "ViewState": "AgIAALkAAAAAAAAAAAAgwOMAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-18T08:18:41.48Z",
               "EditorCaption": ""
