@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Checkpoint
+  - Settings
+  - Mirrors
+  - SelectMap
+  - PlayBtn
   layers:
   - Default
   - TransparentFX

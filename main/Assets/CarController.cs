@@ -5,6 +5,11 @@ public class CarController : MonoBehaviour
 {
     public enum DriveType { FWD, RWD, AWD }
 
+    [Header("Game State")]
+    public bool isPaused = false;
+    public bool isAutomatic = true;
+    public GameObject mirrorObject;
+
     [Header("Drive Setup")]
     public DriveType driveTrain = DriveType.AWD;
     [Range(0, 1)] public float driftLevel = 0.3f;
@@ -18,8 +23,7 @@ public class CarController : MonoBehaviour
     public float rpmLimiter = 7200f;
     public float currentRPM;
 
-    [Header("Manual Transmission (Shift + Key)")]
-    [Tooltip("0: Reverse, 1: 1st, 2: 2nd, etc.")]
+    [Header("Manual Transmission")]
     public float[] gearRatios = { -3.2f, 3.5f, 2.1f, 1.45f, 1.1f, 0.85f, 0.68f };
     public float finalDriveRatio = 3.42f;
     [Range(-1, 6)] public int currentGear = 1;
@@ -62,6 +66,12 @@ public class CarController : MonoBehaviour
         rb.centerOfMass = centerOfMassOffset;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         if (rb.mass < 100) rb.mass = 1500f;
+
+        if (mirrorObject != null)
+        {
+            mirrorObject.SetActive(PlayerPrefs.GetInt("ShowMirrors", 1) == 1);
+        }
+        isAutomatic = PlayerPrefs.GetInt("IsAutomatic", 1) == 1;
     }
 
     void Start()
@@ -69,18 +79,25 @@ public class CarController : MonoBehaviour
         wheels[FL] = wheelFL; wheels[FR] = wheelFR;
         wheels[RL] = wheelRL; wheels[RR] = wheelRR;
         for (int i = 0; i < 4; i++)
+        {
             if (wheels[i] != null)
                 wheelRestPos[i] = transform.InverseTransformPoint(wheels[i].position);
+        }
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P)) TogglePause();
+        if (isPaused) return;
+
         HandleInputs();
+        if (isAutomatic) HandleAutomaticShifting();
         UpdateVisualEffects();
     }
 
     void FixedUpdate()
     {
+        if (isPaused) return;
         float speed = Vector3.Dot(rb.linearVelocity, transform.forward);
         ApplySuspension();
         ApplySteering(speed);
@@ -93,6 +110,21 @@ public class CarController : MonoBehaviour
     public bool IsWheelGrounded(int index) => grounded[index];
     public bool IsSkidding(int index) => Mathf.Abs(lateralSlip[index]) > (1.15f - (driftLevel * 0.7f));
 
+    private void HandleAutomaticShifting()
+    {
+        if (currentGear > 0 && currentRPM > rpmLimiter - 500 && currentGear < gearRatios.Length - 1)
+            currentGear++;
+        else if (currentGear > 1 && currentRPM < idleRPM + 1000)
+            currentGear--;
+    }
+
+    private void TogglePause()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
+        if (isPaused) { throttle = 0; steer = 0; brake = 0; isHandbraking = false; }
+    }
+
     private void HandleInputs()
     {
         throttle = Mathf.Clamp01(Input.GetAxis("Vertical"));
@@ -100,16 +132,12 @@ public class CarController : MonoBehaviour
         steer = Input.GetAxis("Horizontal");
         isHandbraking = Input.GetKey(KeyCode.Space);
 
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        if (!isAutomatic && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
         {
             if (Input.GetKeyDown(KeyCode.R)) currentGear = -1;
             if (Input.GetKeyDown(KeyCode.Alpha0)) currentGear = 0;
-            if (Input.GetKeyDown(KeyCode.Alpha1)) currentGear = 1;
-            if (Input.GetKeyDown(KeyCode.Alpha2)) currentGear = 2;
-            if (Input.GetKeyDown(KeyCode.Alpha3)) currentGear = 3;
-            if (Input.GetKeyDown(KeyCode.Alpha4)) currentGear = 4;
-            if (Input.GetKeyDown(KeyCode.Alpha5)) currentGear = 5;
-            if (Input.GetKeyDown(KeyCode.Alpha6)) currentGear = 6;
+            for (int i = 1; i <= 6; i++)
+                if (Input.GetKeyDown(KeyCode.Alpha0 + i)) currentGear = i;
         }
     }
 
@@ -129,7 +157,6 @@ public class CarController : MonoBehaviour
         {
             float rpmNormalized = Mathf.Abs(currentRPM - peakTorqueRPM) / maxRPM;
             float torqueCurve = Mathf.Max(0.1f, 1.0f - rpmNormalized);
-
             float totalForce = (maxTorqueNM * torqueCurve * throttle * gearRatio * finalDriveRatio) / wheelRadius;
 
             if (driveTrain == DriveType.FWD) DistributeForce(FL, FR, totalForce);
@@ -149,14 +176,11 @@ public class CarController : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             if (!grounded[i]) continue;
-
             Quaternion wRot = transform.rotation * Quaternion.Euler(0, (i < 2) ? smoothSteer : 0, 0);
             Vector3 sideDir = wRot * Vector3.right;
             lateralSlip[i] = Vector3.Dot(sideDir, rb.GetPointVelocity(wheels[i].position));
-
             float friction = (driftLevel <= 0.05f) ? 4.5f : (1.7f - driftLevel);
             if (driveTrain == DriveType.AWD) friction *= 1.2f;
-
             rb.AddForceAtPosition(-sideDir * lateralSlip[i] * friction * rb.mass * 0.25f, wheels[i].position);
         }
     }
@@ -167,12 +191,7 @@ public class CarController : MonoBehaviour
         {
             float bForce = isHandbraking ? handbrakeTorque : brakeTorque * brake;
             rb.AddForce(-transform.forward * bForce * Mathf.Sign(speed));
-
-            if (Mathf.Abs(speed) < stopThreshold)
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-            }
+            if (Mathf.Abs(speed) < stopThreshold) { rb.linearVelocity = Vector3.zero; rb.angularVelocity = Vector3.zero; }
         }
     }
 
