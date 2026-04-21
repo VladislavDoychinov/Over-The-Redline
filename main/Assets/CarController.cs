@@ -29,6 +29,7 @@ public class CarController : MonoBehaviour
     [Range(-1, 6)] public int currentGear = 1;
 
     [Header("Physics & Braking")]
+    public float currentSpeed;
     public float brakeTorque = 12000f;
     public float handbrakeTorque = 22000f;
     public float stopThreshold = 0.6f;
@@ -98,13 +99,16 @@ public class CarController : MonoBehaviour
     void FixedUpdate()
     {
         if (isPaused) return;
-        float speed = Vector3.Dot(rb.linearVelocity, transform.forward);
+
+        float speedMS = Vector3.Dot(rb.linearVelocity, transform.forward);
+        currentSpeed = speedMS * 3.6f;
+
         ApplySuspension();
-        ApplySteering(speed);
-        ApplyEnginePhysics(speed);
-        ApplyTireForces(speed);
-        ApplyBrakingLogic(speed);
-        UpdateWheelPositions(speed);
+        ApplySteering(speedMS);
+        ApplyEnginePhysics(speedMS);
+        ApplyTireForces(speedMS);
+        ApplyBrakingLogic(speedMS);
+        UpdateWheelPositions(speedMS);
     }
 
     public bool IsWheelGrounded(int index) => grounded[index];

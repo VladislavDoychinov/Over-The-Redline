@@ -7,6 +7,7 @@ public class CameraViewSwitcher : MonoBehaviour
 
     [Header("UI Elements")]
     public GameObject gaugeUI;
+    public GameObject gaugeUI1;
 
     [Header("Offsets")]
     public Vector3 thirdPersonOffset = new Vector3(0, 1.5f, -4.4f);
@@ -106,9 +107,10 @@ public class CameraViewSwitcher : MonoBehaviour
 
     private void UpdateUIVisibility()
     {
-        if (gaugeUI != null)
+        if (gaugeUI != null || gaugeUI1 != null)
         {
             gaugeUI.SetActive(cameraMode == 0);
+            gaugeUI1.SetActive(cameraMode == 0);
         }
     }
 
