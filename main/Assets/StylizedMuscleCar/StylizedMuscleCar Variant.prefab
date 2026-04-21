@@ -1847,6 +1847,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2509316876607118221}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5207312295289491014}
   m_SourcePrefab: {fileID: 100100000, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}
 --- !u!4 &2408849285511016784 stripped
 Transform:
@@ -1965,6 +1968,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &5207312295289491014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845398703745282439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f61bb907583a4b4a94e9b23b31a7dc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LapManager
+  checkpointText: {fileID: 0}
 --- !u!4 &5574338429671976822 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 190064773579482016, guid: 4f43ecc301b522a429eac644e59117f5, type: 3}
