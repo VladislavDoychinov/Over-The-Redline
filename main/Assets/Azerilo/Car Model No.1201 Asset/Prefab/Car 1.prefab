@@ -2368,9 +2368,6 @@ Transform:
   - {fileID: 4181783421525994}
   - {fileID: 4579159919485476}
   - {fileID: 4045448285641590}
-  - {fileID: 5617776224502635274}
-  - {fileID: 6504701222481478734}
-  - {fileID: 1218824926501732229}
   - {fileID: 4534138653771988}
   - {fileID: 4915523121102998}
   - {fileID: 4175191876245164}
@@ -2378,6 +2375,7 @@ Transform:
   - {fileID: 4067579309199776}
   - {fileID: 4005264636783654}
   - {fileID: 4022225379292512}
+  - {fileID: 1221763379009410249}
   m_Father: {fileID: 4352964966052378}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1504280090962082
@@ -3331,39 +3329,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
   isPaused: 0
-  isAutomatic: 1
-  mirrorObject: {fileID: 0}
+  isAutomatic: 0
+  mirrorObject: {fileID: 2735626955023688532}
   driveTrain: 2
-  driftLevel: 0
+  driftLevel: 0.333
   isEngineOn: 1
   maxTorqueNM: 392
   peakTorqueRPM: 4400
   idleRPM: 800
-  maxRPM: 7500
-  rpmLimiter: 7000
+  maxRPM: 7000
+  rpmLimiter: 6700
   currentRPM: 0
   gearRatios:
-  - -3.2
-  - 3.5
-  - 2.1
-  - 1.45
-  - 1.1
-  - 0.85
-  - 0.68
-  finalDriveRatio: 3.5
+  - -3.54
+  - 3.63
+  - 2.37
+  - 1.76
+  - 1.34
+  - 1.06
+  - 0.84
+  finalDriveRatio: 3.9
   currentGear: 1
   currentSpeed: 0
   brakeTorque: 8000
   handbrakeTorque: 15000
   stopThreshold: 0.6
-  maxSteerAngle: 35
-  steerSpeed: 7
-  speedSteerDamping: 1
+  maxSteerAngle: 50
+  steerSpeed: 8
+  speedSteerDamping: 0.04
   rideHeight: 0.01
   springStrength: 45000
-  springDamper: 25000
-  wheelRadius: 0.3
-  centerOfMassOffset: {x: 0, y: -0.6, z: 0}
+  springDamper: 30000
+  wheelRadius: 0.32
+  centerOfMassOffset: {x: 0, y: -1, z: 0}
   wheelFL: {fileID: 4484528274142068}
   wheelFR: {fileID: 4981666998271360}
   wheelRL: {fileID: 4910949945621414}
@@ -4502,6 +4500,40 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!1 &2735626955023688532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1221763379009410249}
+  m_Layer: 0
+  m_Name: Mirrors2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1221763379009410249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2735626955023688532}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5617776224502635274}
+  - {fileID: 6504701222481478734}
+  - {fileID: 1218824926501732229}
+  m_Father: {fileID: 4124397036704694}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3818942668977203698
 GameObject:
   m_ObjectHideFlags: 0
@@ -5095,7 +5127,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4124397036704694}
+  m_Father: {fileID: 1221763379009410249}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!20 &2439204868371901043
 Camera:
@@ -5236,7 +5268,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4124397036704694}
+  m_Father: {fileID: 1221763379009410249}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!20 &2762568074014663543
 Camera:
@@ -5658,7 +5690,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4124397036704694}
+  m_Father: {fileID: 1221763379009410249}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!20 &8432163958004053907
 Camera:

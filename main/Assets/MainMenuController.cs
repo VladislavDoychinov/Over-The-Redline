@@ -8,18 +8,16 @@ public class MainMenuController : MonoBehaviour
 
     void Awake()
     {
+        selectMap = GameObject.FindWithTag("SelectMap");
         settings = GameObject.FindWithTag("Settings");
-        selectMap = GameObject.FindWithTag("SelectMap"); 
-
-        selectMap.SetActive(false);
+        if (selectMap != null)
+        {
+            selectMap.SetActive(false);
+        }
 
         if (settings != null)
         {
             settings.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("MainMenuController: No GameObject found with tag 'Settings'!");
         }
     }
 

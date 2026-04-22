@@ -6,6 +6,7 @@ public class CarController : MonoBehaviour
     public enum DriveType { FWD, RWD, AWD }
 
     [Header("Game State")]
+    private GameObject garageBtn;
     public bool isPaused = false;
     public bool isAutomatic = true;
     public GameObject mirrorObject;
@@ -68,6 +69,12 @@ public class CarController : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         if (rb.mass < 100) rb.mass = 1500f;
 
+        garageBtn = GameObject.FindWithTag("GarageBtn");
+        if (garageBtn != null)
+        {
+            garageBtn.SetActive(false);
+        }
+
         if (mirrorObject != null)
         {
             mirrorObject.SetActive(PlayerPrefs.GetInt("ShowMirrors", 1) == 1);
@@ -127,6 +134,16 @@ public class CarController : MonoBehaviour
         isPaused = !isPaused;
         Time.timeScale = isPaused ? 0f : 1f;
         if (isPaused) { throttle = 0; steer = 0; brake = 0; isHandbraking = false; }
+
+        if (garageBtn == null)
+        {
+            garageBtn = GameObject.FindWithTag("GarageBtn");
+        }
+
+        if (garageBtn != null)
+        {
+            garageBtn.SetActive(isPaused);
+        }
     }
 
     private void HandleInputs()

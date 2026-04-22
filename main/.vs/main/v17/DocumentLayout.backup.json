@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CarController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\CarController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\LapTimer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\LapTimer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -23,25 +19,12 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "CarController.cs",
-              "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CarController.cs",
-              "RelativeDocumentMoniker": "Assets\\CarController.cs",
-              "ToolTip": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\CarController.cs",
-              "RelativeToolTip": "Assets\\CarController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-22T07:00:22.566Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "LapTimer.cs",
               "DocumentMoniker": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\LapTimer.cs",
               "RelativeDocumentMoniker": "Assets\\LapTimer.cs",
               "ToolTip": "C:\\Users\\Vladislav Doychinov\\Desktop\\Over-The-Redline\\main\\Assets\\LapTimer.cs",
               "RelativeToolTip": "Assets\\LapTimer.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAAwH8AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-22T05:40:09.551Z",
               "EditorCaption": ""

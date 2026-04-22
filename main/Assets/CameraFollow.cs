@@ -24,15 +24,13 @@ public class CameraViewSwitcher : MonoBehaviour
     public float snapStiffness = 100f;
 
     private int cameraMode = 0;
+    private CarController carController;
 
     void Start()
     {
-        ApplyCarSpecificOffsets();
-
-        UpdateUIVisibility();
-        Cursor.lockState = CursorLockMode.Locked;
-
         FindActiveCar();
+        ApplyCarSpecificOffsets();
+        UpdateUIVisibility();
     }
 
     private void ApplyCarSpecificOffsets()
@@ -58,6 +56,10 @@ public class CameraViewSwitcher : MonoBehaviour
             FindActiveCar();
         }
 
+        HandleCursorState();
+
+        if (carController != null && carController.isPaused) return;
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             cameraMode = (cameraMode + 1) % 3;
@@ -67,18 +69,27 @@ public class CameraViewSwitcher : MonoBehaviour
             SnapToTarget();
         }
 
-        if (cameraMode == 0)
-        {
-            snapStiffness = 50f;
-        }
-        else
-        {
-            snapStiffness = 100f;
-        }
+        snapStiffness = (cameraMode == 0) ? 50f : 100f;
 
         if (cameraMode != 0)
         {
             HandleMouseLook();
+        }
+    }
+
+    private void HandleCursorState()
+    {
+        if (carController == null) return;
+
+        if (carController.isPaused)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 
@@ -90,6 +101,7 @@ public class CameraViewSwitcher : MonoBehaviour
             if (p.activeInHierarchy)
             {
                 carTransform = p.transform;
+                carController = p.GetComponent<CarController>();
                 ApplyCarSpecificOffsets();
                 break;
             }
@@ -107,21 +119,13 @@ public class CameraViewSwitcher : MonoBehaviour
 
     private void UpdateUIVisibility()
     {
-        if (gaugeUI != null || gaugeUI1 != null)
-        {
-            gaugeUI.SetActive(cameraMode == 0);
-            gaugeUI1.SetActive(cameraMode == 0);
-        }
+        if (gaugeUI != null) gaugeUI.SetActive(cameraMode == 0);
+        if (gaugeUI1 != null) gaugeUI1.SetActive(cameraMode == 0);
     }
 
     void LateUpdate()
     {
-        if (carTransform == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) carTransform = player.transform;
-            return;
-        }
+        if (carTransform == null) return;
 
         Vector3 currentOffset;
         Quaternion targetRot;
@@ -129,7 +133,6 @@ public class CameraViewSwitcher : MonoBehaviour
         if (cameraMode == 1 || cameraMode == 2)
         {
             currentOffset = (cameraMode == 1) ? firstPersonOffset : secondPersonOffset;
-
             Quaternion mouseRotation = Quaternion.Euler(pitch, yaw, 0);
             targetRot = carTransform.rotation * mouseRotation;
         }

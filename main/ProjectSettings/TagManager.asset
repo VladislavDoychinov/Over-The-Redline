@@ -10,6 +10,7 @@ TagManager:
   - SelectMap
   - PlayBtn
   - Road
+  - GarageBtn
   layers:
   - Default
   - TransparentFX
