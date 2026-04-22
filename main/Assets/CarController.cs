@@ -138,7 +138,7 @@ public class CarController : MonoBehaviour
 
         if (!isAutomatic && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
         {
-            if (Input.GetKeyDown(KeyCode.R)) currentGear = -1;
+            if (Input.GetKeyDown(KeyCode.B)) currentGear = -1;
             if (Input.GetKeyDown(KeyCode.Alpha0)) currentGear = 0;
             for (int i = 1; i <= 6; i++)
                 if (Input.GetKeyDown(KeyCode.Alpha0 + i)) currentGear = i;

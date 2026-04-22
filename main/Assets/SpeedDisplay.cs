@@ -35,7 +35,7 @@ public class SpeedDisplay : MonoBehaviour
             else
             {
                 string gearName = car.currentGear == 0 ? "N" : car.currentGear.ToString();
-                speedText.text = $"Gear: {gearName}\n{kmh.ToString("F0")} km/h";
+                speedText.text = $"Gear: {gearName}\n";
             }
         }
 
