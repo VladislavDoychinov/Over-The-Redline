@@ -3329,39 +3329,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarController
   isPaused: 0
-  isAutomatic: 0
+  isAutomatic: 1
   mirrorObject: {fileID: 2735626955023688532}
   driveTrain: 2
-  driftLevel: 0.333
+  driftLevel: 0.869
   isEngineOn: 1
   maxTorqueNM: 392
   peakTorqueRPM: 4400
   idleRPM: 800
-  maxRPM: 7000
-  rpmLimiter: 6700
+  maxRPM: 8000
+  rpmLimiter: 7500
   currentRPM: 0
   gearRatios:
-  - -3.54
+  - -3.545
   - 3.63
-  - 2.37
-  - 1.76
-  - 1.34
-  - 1.06
-  - 0.84
+  - 2.375
+  - 1.761
+  - 1.346
+  - 0.971
+  - 0.756
   finalDriveRatio: 3.9
   currentGear: 1
   currentSpeed: 0
-  brakeTorque: 8000
-  handbrakeTorque: 15000
+  brakeTorque: 12000
+  handbrakeTorque: 22000
   stopThreshold: 0.6
-  maxSteerAngle: 50
-  steerSpeed: 8
-  speedSteerDamping: 0.04
+  maxSteerAngle: 40
+  steerSpeed: 9
+  speedSteerDamping: 0
   rideHeight: 0.01
-  springStrength: 45000
+  springStrength: 50000
   springDamper: 30000
   wheelRadius: 0.32
-  centerOfMassOffset: {x: 0, y: -1, z: 0}
+  centerOfMassOffset: {x: 0, y: -1.5, z: 0.1}
   wheelFL: {fileID: 4484528274142068}
   wheelFR: {fileID: 4981666998271360}
   wheelRL: {fileID: 4910949945621414}
