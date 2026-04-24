@@ -1,11 +1,9 @@
 fileFormatVersion: 2
-guid: 6ade06992677ab24aad294cf965ee4b4
+guid: 01f7f31aedca16d4298bb64c6228f356
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - car1Prefab: {instanceID: 0}
-  - car2Prefab: {instanceID: 0}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
