@@ -9,6 +9,11 @@ TagManager:
   - Mirrors
   - SelectMap
   - PlayBtn
+  - Road
+  - GarageBtn
+  - MusicStart
+  - Hazard
+  - Ghost
   layers:
   - Default
   - TransparentFX

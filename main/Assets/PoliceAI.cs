@@ -3,7 +3,7 @@ using UnityEngine;
 public class PoliceAI : MonoBehaviour
 {
     public Transform playerCar;
-    public Vector3 followOffset = new Vector3(0, -0.5f, -15f); // Stay further back to start
+    public Vector3 followOffset = new Vector3(0, -0.5f, -15f);
     public float followStiffness = 5f;
     public float catchUpSpeed = 0.2f;
 
@@ -14,7 +14,6 @@ public class PoliceAI : MonoBehaviour
 
     void FindPlayer()
     {
-        // This looks for the actual car driving in the scene
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) playerCar = player.transform;
     }
@@ -23,24 +22,19 @@ public class PoliceAI : MonoBehaviour
     {
         if (playerCar == null)
         {
-            FindPlayer(); // Keep looking if player is missing
+            FindPlayer();
             return;
         }
 
-        // Calculate where the police car SHOULD be
         Vector3 targetPos = playerCar.position + (playerCar.rotation * followOffset);
-
-        // Creep closer
         if (followOffset.z < -2.5f)
         {
             followOffset.z += catchUpSpeed * Time.deltaTime;
         }
 
-        // THE FIX: Directly set position if too far, otherwise Lerp
         float dist = Vector3.Distance(transform.position, targetPos);
         if (dist > 100f)
         {
-            // If the player is way ahead, just teleport the police car behind them
             transform.position = targetPos;
         }
         else
@@ -50,7 +44,6 @@ public class PoliceAI : MonoBehaviour
 
         transform.rotation = Quaternion.Slerp(transform.rotation, playerCar.rotation, followStiffness * Time.deltaTime);
 
-        // Kill check
         if (Vector3.Distance(transform.position, playerCar.position) < 3f)
         {
             Debug.Log("YOU ARE DEAD!");

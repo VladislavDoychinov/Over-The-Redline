@@ -1,32 +1,35 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using UnityEngine.Splines;
+using Unity.Mathematics;
 
 public class LapTimer : MonoBehaviour
 {
-    [Header("UI Reference")]
+    [Header("UI References")]
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI bestLapText;
+    public TextMeshProUGUI checkpointText;
 
-    private float currentTime;
-    private float bestTime;
-    private bool timerActive = false;
-    private bool hasHitCheckpoint = false;
+    [Header("Reset Settings")]
+    public SplineContainer roadSpline;
 
-
+    private static float currentTime;
+    private static float bestTime;
+    private static bool timerActive = false;
+    private static bool hasHitCheckpoint = false;
     private string saveKey = "BestLapTime";
 
     void Start()
     {
         bestTime = PlayerPrefs.GetFloat(saveKey, 0f);
+        UpdateBestLapUI();
 
-        if (bestTime > 0)
+        if (checkpointText != null)
         {
-            bestLapText.text = "Best: " + FormatTime(bestTime);
-        }
-        else
-        {
-            bestLapText.text = "Best: --:--.--";
+            checkpointText.text = "";
+            checkpointText.color = new Color(checkpointText.color.r, checkpointText.color.g, checkpointText.color.b, 0);
         }
     }
 
@@ -34,13 +37,43 @@ public class LapTimer : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            ResetPlayerToNearestSplinePoint();
         }
 
         if (timerActive)
         {
             currentTime += Time.deltaTime;
-            timerText.text = FormatTime(currentTime);
+            if (timerText != null) timerText.text = FormatTime(currentTime);
+        }
+    }
+
+    void ResetPlayerToNearestSplinePoint()
+    {
+        if (roadSpline == null) return;
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            float3 localPlayerPos = roadSpline.transform.InverseTransformPoint(player.transform.position);
+
+            SplineUtility.GetNearestPoint(roadSpline.Spline, localPlayerPos, out float3 nearestLocalPoint, out float t);
+
+            Vector3 worldPos = roadSpline.transform.TransformPoint((Vector3)nearestLocalPoint);
+
+            player.transform.position = worldPos + Vector3.up * 1.5f;
+
+            float3 localForward = roadSpline.EvaluateTangent(t);
+            Vector3 worldForward = roadSpline.transform.TransformDirection((Vector3)localForward);
+            player.transform.rotation = Quaternion.LookRotation(worldForward);
+
+            Rigidbody rb = player.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.Sleep();
+            }
         }
     }
 
@@ -48,42 +81,44 @@ public class LapTimer : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        if (this.CompareTag("Checkpoint"))
+        if (gameObject.CompareTag("Checkpoint"))
         {
             hasHitCheckpoint = true;
-            Debug.Log("Checkpoint Validated!");
+            StopAllCoroutines();
+            StartCoroutine(FadeCheckpointText("CHECKPOINT REACHED"));
         }
 
-        if (this.CompareTag("Finish"))
+        if (gameObject.CompareTag("Finish"))
         {
-            if (timerActive && hasHitCheckpoint)
-            {
-                CheckBestLap();
-                currentTime = 0f;
-                hasHitCheckpoint = false;
-            }
-            else if (!timerActive)
+            if (!timerActive)
             {
                 timerActive = true;
                 currentTime = 0f;
             }
-            else
+            else if (hasHitCheckpoint)
             {
-                Debug.Log("Cheat Attempted: You didn't hit the checkpoint!");
+                CheckBestLap();
+                currentTime = 0f;
+                hasHitCheckpoint = false;
             }
         }
     }
 
     void CheckBestLap()
     {
-        if (bestTime == 0 || currentTime < bestTime)
+        if (bestTime <= 0 || currentTime < bestTime)
         {
             bestTime = currentTime;
-            bestLapText.text = "Best: " + FormatTime(bestTime);
-
+            UpdateBestLapUI();
             PlayerPrefs.SetFloat(saveKey, bestTime);
             PlayerPrefs.Save();
         }
+    }
+
+    void UpdateBestLapUI()
+    {
+        if (bestLapText != null)
+            bestLapText.text = (bestTime > 0) ? "Best: " + FormatTime(bestTime) : "Best: --:--.--";
     }
 
     string FormatTime(float time)
@@ -94,11 +129,20 @@ public class LapTimer : MonoBehaviour
         return string.Format("{0:00}:{1:00}.{2:00}", minutes, seconds, fraction);
     }
 
-    [ContextMenu("Reset Best Time")]
-    public void ResetBestTime()
+    IEnumerator FadeCheckpointText(string message)
     {
-        PlayerPrefs.DeleteKey(saveKey);
-        bestTime = 0f;
-        bestLapText.text = "Best: --:--.--";
+        if (checkpointText == null) yield break;
+        checkpointText.text = message;
+        checkpointText.color = new Color(checkpointText.color.r, checkpointText.color.g, checkpointText.color.b, 1);
+        yield return new WaitForSeconds(1.5f);
+        float duration = 1.0f;
+        float elapsed = 0;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1, 0, elapsed / duration);
+            checkpointText.color = new Color(checkpointText.color.r, checkpointText.color.g, checkpointText.color.b, alpha);
+            yield return null;
+        }
     }
 }
