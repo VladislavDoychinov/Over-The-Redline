@@ -9,6 +9,7 @@ public class MusicSync : MonoBehaviour
     public float endTime = 150.0f;
 
     private bool isBossActive = false;
+    public WinManager winManager;
 
     [Header("Ghost Settings")]
     public GameObject ghostObject;
@@ -35,6 +36,13 @@ public class MusicSync : MonoBehaviour
             else if (currentTime >= endTime && isBossActive)
             {
                 ActivateBoss(false);
+                
+                
+            }else if (currentTime >= endTime + 22){
+                if (winManager != null)
+                {
+                    winManager.ShowWinScreen();
+                }
             }
 
             if (currentTime >= ghostStartTime && currentTime < ghostEndTime && !ghostActivated)

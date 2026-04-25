@@ -7,9 +7,12 @@ public class PoliceAI : MonoBehaviour
     public float followStiffness = 5f;
     public float catchUpSpeed = 0.2f;
 
+    private WinManager uiManager;
+
     void Start()
     {
         FindPlayer();
+        uiManager = Object.FindAnyObjectByType<WinManager>();
     }
 
     void FindPlayer()
@@ -27,12 +30,14 @@ public class PoliceAI : MonoBehaviour
         }
 
         Vector3 targetPos = playerCar.position + (playerCar.rotation * followOffset);
+
         if (followOffset.z < -2.5f)
         {
             followOffset.z += catchUpSpeed * Time.deltaTime;
         }
 
         float dist = Vector3.Distance(transform.position, targetPos);
+
         if (dist > 100f)
         {
             transform.position = targetPos;
@@ -46,7 +51,15 @@ public class PoliceAI : MonoBehaviour
 
         if (Vector3.Distance(transform.position, playerCar.position) < 3f)
         {
-            Debug.Log("YOU ARE DEAD!");
+            if (uiManager != null)
+            {
+                uiManager.ShowLoseScreen();
+            }
+            else
+            {
+                Debug.Log("YOU ARE DEAD! (But WinManager was not found in the scene)");
+                Time.timeScale = 0;
+            }
         }
     }
 }
