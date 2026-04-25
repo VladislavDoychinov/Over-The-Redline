@@ -3237,6 +3237,7 @@ GameObject:
   - component: {fileID: -304863933948413187}
   - component: {fileID: 6425344593772952068}
   - component: {fileID: 2046022812749318327}
+  - component: {fileID: 3916429793371719327}
   m_Layer: 0
   m_Name: Car 1
   m_TagString: Player
@@ -3371,6 +3372,18 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &3916429793371719327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654648867817274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbe31543a1e0721449c821292044c4cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackManager
 --- !u!1 &1708700505944424
 GameObject:
   m_ObjectHideFlags: 0

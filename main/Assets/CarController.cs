@@ -98,7 +98,11 @@ public class CarController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P)) TogglePause();
         if (isPaused) return;
 
-        HandleInputs();
+        if (gameObject.CompareTag("Player"))
+        {
+            HandleInputs();
+        }
+
         if (isAutomatic) HandleAutomaticShifting();
         UpdateVisualEffects();
     }

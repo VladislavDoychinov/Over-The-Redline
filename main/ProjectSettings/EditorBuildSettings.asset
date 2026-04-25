@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HellMode.unity
     guid: a2484c76680ef5d488a439146411a87a
+  - enabled: 1
+    path: Assets/Scenes/Blizzard.unity
+    guid: 415674a9ef53d614ba76457a04c40e39
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

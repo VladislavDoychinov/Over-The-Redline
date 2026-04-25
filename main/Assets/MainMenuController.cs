@@ -46,6 +46,11 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("HellMode");
     }
 
+    public void Blizzard()
+    {
+        SceneManager.LoadScene("Blizzard");
+    }
+
     public void SelectMap()
     {
         if (selectMap != null)

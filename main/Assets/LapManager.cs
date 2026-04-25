@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class LapManager : MonoBehaviour
 {
@@ -12,6 +13,18 @@ public class LapManager : MonoBehaviour
     void Start()
     {
         uiManager = Object.FindAnyObjectByType<WinManager>();
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        LapManager tmanager = player.GetComponent<LapManager>();
+
+        if (SceneManager.GetActiveScene().name == "HellMode")
+        {
+            tmanager.enabled = true;
+        }
+        else
+        {
+            tmanager.enabled = false;
+        }
 
 
         GameObject textObj = GameObject.Find("CheckpointText");
@@ -63,7 +76,7 @@ public class LapManager : MonoBehaviour
         else
         {
             Time.timeScale = 0;
-            Debug.LogError("WinManager not found! Game paused but no UI shown.");
+            //Debug.LogError("WinManager not found! Game paused but no UI shown.");
         }
     }
 
