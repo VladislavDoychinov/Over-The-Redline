@@ -8,10 +8,10 @@ public class CarHealth : MonoBehaviour
     {
         uiManager = Object.FindAnyObjectByType<WinManager>();
 
-        if (uiManager == null)
-        {
-            Debug.LogError("CarHealth: Could not find WinManager in the scene! Make sure WinCanvas is in the hierarchy.");
-        }
+        //if (uiManager == null)
+        //{
+        //    Debug.LogError("CarHealth: Could not find WinManager in the scene! Make sure WinCanvas is in the hierarchy.");
+        //}
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -31,7 +31,9 @@ public class CarHealth : MonoBehaviour
             if (uiManager != null)
             {
                 uiManager.ShowLoseScreen();
-            }else{
+            }
+            else
+            {
                 Debug.Log("GAME OVER (But no UI Manager found to show screen)");
             }
         }

@@ -28,7 +28,7 @@ public class TrackSpawner : MonoBehaviour
         LapManager lapManager = botCar.GetComponent<LapManager>();
         lapManager.enabled = false;
 
-        if (SceneManager.GetActiveScene().name == "HellMode")
+        if (SceneManager.GetActiveScene().name != "TrackScene")
         {
             botCar.SetActive(false);
         }

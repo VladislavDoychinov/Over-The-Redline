@@ -36,10 +36,6 @@ public class LapManager : MonoBehaviour
             checkpointText.text = "";
             checkpointText.color = new Color(checkpointText.color.r, checkpointText.color.g, checkpointText.color.b, 0);
         }
-        else
-        {
-            Debug.LogError("LapManager: Couldn't find CheckpointText in the scene! Make sure the UI object is named correctly.");
-        }
     }
 
     private void OnTriggerEnter(Collider other)
