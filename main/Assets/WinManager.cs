@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections; // Required for Coroutines
 
 public class WinManager : MonoBehaviour
 {
@@ -11,19 +12,17 @@ public class WinManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void ShowWinScreen()
-    {
-        winUI.SetActive(true);
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        DisableCar();
-    }
+    public void ShowWinScreen() => StartCoroutine(DisplayUI(winUI));
+    public void ShowLoseScreen() => StartCoroutine(DisplayUI(loseUI));
 
-    public void ShowLoseScreen()
+    private IEnumerator DisplayUI(GameObject ui)
     {
-        loseUI.SetActive(true);
+        ui.SetActive(true);
         Time.timeScale = 0f;
+
+        // This forces Unity to process a frame before locking the cursor
+        yield return new WaitForSecondsRealtime(0.1f);
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         DisableCar();
@@ -34,7 +33,7 @@ public class WinManager : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            CarController controller = player.GetComponent<CarController>();
+            var controller = player.GetComponent<CarController>();
             if (controller != null) controller.enabled = false;
         }
     }
