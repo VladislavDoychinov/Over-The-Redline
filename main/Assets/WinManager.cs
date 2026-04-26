@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections; // Required for Coroutines
+using System.Collections;
 
 public class WinManager : MonoBehaviour
 {
@@ -18,17 +18,17 @@ public class WinManager : MonoBehaviour
     private IEnumerator DisplayUI(GameObject ui)
     {
         ui.SetActive(true);
+        
+        DisableCarAndCamera();
+
+        yield return null; 
+
         Time.timeScale = 0f;
-
-        // This forces Unity to process a frame before locking the cursor
-        yield return new WaitForSecondsRealtime(0.1f);
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        DisableCar();
     }
 
-    private void DisableCar()
+    private void DisableCarAndCamera()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -36,6 +36,8 @@ public class WinManager : MonoBehaviour
             var controller = player.GetComponent<CarController>();
             if (controller != null) controller.enabled = false;
         }
+        CameraViewSwitcher cam = Object.FindFirstObjectByType<CameraViewSwitcher>();
+        if (cam != null) cam.enabled = false;
     }
 
     public void RestartGame()

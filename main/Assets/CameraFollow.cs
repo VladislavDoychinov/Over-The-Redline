@@ -77,22 +77,27 @@ public class CameraViewSwitcher : MonoBehaviour
         }
     }
 
-    private void HandleCursorState()
+    private void HandleCursorState(){
+    if (Time.timeScale == 0)
     {
-        if (carController == null) return;
-
-        if (carController.isPaused)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        return; 
     }
 
+    if (carController == null) return;
+
+    if (carController.isPaused)
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    else
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+}
     private void FindActiveCar()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
